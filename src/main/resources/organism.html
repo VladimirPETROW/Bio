@@ -6,32 +6,96 @@
     <title>Микроорганизмы</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/organism.css" rel="stylesheet">
 </head>
 <body>
-    <div class="d-flex flex-column vh-100 w-100 overflow-hidden">
-        <div class="row flex-grow-1 overflow-hidden m-0 p-2">
-            <div class="col p-0">
-                <div class="list-group">
-                    <a href="/organism/" class="list-group-item list-group-item-action">Микроорганизмы</a>
-                    <a href="/reactive/" class="list-group-item list-group-item-action">Реактивы</a>
-                    <a href="/material/" class="list-group-item list-group-item-action">Сырье</a>
-                    <a href="/experiment/" class="list-group-item list-group-item-action">Эксперименты</a>
+    <div class="modal" id="createOrganism" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Создание микроорганизма</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Название штамма</label>
+                            <input type="text" class="form-control" data-valid-type="text" id="name">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="doubling" class="form-label">Скорость удвоения, ч</label>
+                            <input type="text" class="form-control" data-valid-type="number" id="doubling">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-outline-primary" id="save">Сохранить</button>
                 </div>
             </div>
-            <div class="col-10 d-flex flex-column">
-                <div class="row flex-schrink-1 m-0">
-                    <div class="fs-3 p-2">Микроорганизмы</div>
-                </div>
-                <div class="flex-grow-1 m-0">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+        </div>
+    </div>
+    <div class="d-flex flex-column vh-100 w-100 overflow-hidden p-1">
+        <div class="row flex-shrink-1 m-0">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href="/organism/" class="nav-link active">Микроорганизмы</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reactive/" class="nav-link">Реактивы</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/material/" class="nav-link">Сырье</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/feed/" class="nav-link">Питательные среды</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/solution/" class="nav-link">Раствор</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/history/" class="nav-link">История</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/experiment/" class="nav-link">Эксперимент</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row flex-shrink-1 m-0">
+            &nbsp;
+        </div>
+        <div class="row flex-grow-1 overflow-hidden m-0 p-1 organism d-none">
+            <div class="col h-100 p-0">
+                <div class="d-flex flex-column h-100 p-0">
+                    <div class="row flex-grow-1 m-0 overflow-hidden">
+                        <div class="table-sticky overflow-auto h-100 p-0 border">
+                            <table class="table table-hover table-bordered organism-table m-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th class="w-min">№</th>
+                                    <th>Штамм</th>
+                                    <th>Скорость удвоения, ч</th>
+                                </tr>
+                                </thead>
+                                <tbody class="organism-tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row flex-grow-1 ms-0 me-0 mt-2 mb-0 organism-selected d-none">
+                        <div class="col fw-bold border bg-light d-table">
+                            <div class="organism-selected-info d-table-cell align-middle text-center p-2"></div>
+                        </div>
+                    </div>
+                    <div class="row flex-shrink-1 m-0 pt-3 pb-2">
+                        <div class="col ps-0">
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createOrganism">Новый микроорганизм</button>
+                        </div>
+                        <div class="col organism-selected d-none text-end pe-0">
+                            <!--button type="button" class="btn btn-outline-primary organism-unselect">Отмена</button-->
+                            <button id="toExperiment" type="button" class="btn btn-outline-primary">В эксперимент</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

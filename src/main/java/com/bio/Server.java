@@ -27,10 +27,13 @@ public class Server {
     void createContexts() {
         contexts = new HashMap<>();
         addContext("/", HttpMethod.GET, handler::root, HttpResponse::asText);
-        addContext("/organism/", HttpMethod.GET, handler::organism, HttpResponse::asText);
-        addContext("/reactive/", HttpMethod.GET, handler::reactive, HttpResponse::asText);
-        addContext("/material/", HttpMethod.GET, handler::material, HttpResponse::asText);
-        addContext("/experiment/", HttpMethod.GET, handler::experiment, HttpResponse::asText);
+        addContextView("/organism/", HttpMethod.GET, "organism", HttpResponse::asText);
+        addContextView("/reactive/", HttpMethod.GET, "reactive", HttpResponse::asText);
+        addContextView("/material/", HttpMethod.GET, "material", HttpResponse::asText);
+        addContextView("/solution/", HttpMethod.GET, "solution", HttpResponse::asText);
+        addContextView("/feed/", HttpMethod.GET, "feed", HttpResponse::asText);
+        addContextView("/history/", HttpMethod.GET, "history", HttpResponse::asText);
+        addContextView("/experiment/", HttpMethod.GET, "experiment", HttpResponse::asText);
         addContextCRUD("/api/organism/", new OrganismHandler(), HttpResponse::asJson);
         addContextCRUD("/api/reactive/", new ReactiveHandler(), HttpResponse::asJson);
         addContextCRUD("/api/material/", new MaterialHandler(), HttpResponse::asJson);
@@ -40,6 +43,10 @@ public class Server {
 
     void addContext(String path, HttpMethod method, Worker worker, Function<HttpResponse, HttpResponse> formatter) {
         httpServer.createContext(path, exchange -> handler.handleMethod(method, worker, exchange, formatter));
+    }
+
+    void addContextView(String path, HttpMethod method, String view, Function<HttpResponse, HttpResponse> formatter) {
+        httpServer.createContext(path, exchange -> handler.handleView(method, view, exchange, formatter));
     }
 
     void addContextCRUD(String path, HandlerCRUD handlerCRUD, Function<HttpResponse, HttpResponse> formatter) {

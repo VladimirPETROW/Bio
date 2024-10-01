@@ -8,31 +8,47 @@
     <link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
-    <div class="d-flex flex-column vh-100 w-100 overflow-hidden">
-        <div class="row flex-grow-1 overflow-hidden m-0 p-2">
-            <div class="col p-0">
-                <div class="list-group">
-                    <a href="/organism/" class="list-group-item list-group-item-action">Микроорганизмы</a>
-                    <a href="/reactive/" class="list-group-item list-group-item-action">Реактивы</a>
-                    <a href="/material/" class="list-group-item list-group-item-action">Сырье</a>
-                    <a href="/experiment/" class="list-group-item list-group-item-action">Эксперименты</a>
-                </div>
-            </div>
-            <div class="col-10 d-flex flex-column">
-                <div class="row flex-schrink-1 m-0">
-                    <div class="fs-3 p-2">Сырье</div>
-                </div>
-                <div class="flex-grow-1 m-0">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="d-flex flex-column vh-100 w-100 overflow-hidden p-1">
+        <div class="row flex-shrink-1 m-0">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href="/organism/" class="nav-link">Микроорганизмы</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reactive/" class="nav-link">Реактивы</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/material/" class="nav-link active">Сырье</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/feed/" class="nav-link">Питательные среды</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/solution/" class="nav-link">Раствор</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/history/" class="nav-link">История</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/experiment/" class="nav-link">Эксперимент</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row flex-shrink-1 m-0">
+            &nbsp;
+        </div>
+        <div class="row flex-grow-1 m-0">
+            <div class="col">
+                <span class="info"></span>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody class="material">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

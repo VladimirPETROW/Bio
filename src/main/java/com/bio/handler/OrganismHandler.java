@@ -24,14 +24,14 @@ public class OrganismHandler extends HandlerCRUD {
         //mapper.registerModule(new JavaTimeModule());
         OrganismValue organismValue = mapper.readValue(request, OrganismValue.class);
         StringBuffer error = new StringBuffer();
-        if (organismValue.getName() == null) {
+        if ((organismValue.getName() == null) || (organismValue.getName().trim().isEmpty())) {
             error.append("Не указано название.");
         }
         if (organismValue.getDoubling() == null) {
             if (error.length() > 0) {
                 error.append(" ");
             }
-            error.append("Не указано время удвоения.");
+            error.append("Не указана скорость удвоения.");
         }
         if (error.length() > 0) {
             return new HttpResponse(400, error.toString());
@@ -41,11 +41,12 @@ public class OrganismHandler extends HandlerCRUD {
             OrganismDatabase.prepareInsert(statement, organismValue);
             ResultSet rs = statement.executeQuery();
             rs.next();
-            Long id = rs.getLong(1);
+            //Long id = rs.getLong(1);
+            Organism organism = OrganismDatabase.get(rs);
             Bio.database.commit();
-            String message = String.format("Организм %d добавлен.", id);
+            String message = String.format("Организм %d добавлен.", organism.getId());
             log.info(message);
-            return new HttpResponse(200, message);
+            return new HttpResponse(200, organism);
         }
     }
 

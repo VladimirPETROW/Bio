@@ -21,7 +21,7 @@ public class Bio {
     static Logger log = Logger.getLogger(Bio.class.getName());
 
     public static void main(String[] args) {
-        String config = "config.properties";
+        String config = "config\\application.properties";
         Properties properties = new Properties();
         try (FileReader reader = new FileReader(config)) {
             properties.load(reader);
@@ -61,6 +61,7 @@ public class Bio {
             statement.execute(FeedDatabase.createTable);
             statement.execute(FeedReactiveDatabase.createTable);
             statement.execute(FeedMaterialDatabase.createTable);
+            statement.execute(FeedItemDatabase.createTable);
             statement.execute(ExperimentDatabase.createTable);
             database.commit();
         } catch (SQLException e) {

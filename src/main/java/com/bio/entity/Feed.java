@@ -2,7 +2,6 @@ package com.bio.entity;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -11,4 +10,6 @@ public class Feed {
     String name;
     List<FeedReactive> reactives;
     List<FeedMaterial> materials;
+    List<FeedItem> items;
+    String proc;
 }

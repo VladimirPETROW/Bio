@@ -1,2 +1,60 @@
 
+.w-min {
+    width: 0px;
+}
 
+.item {
+    cursor: pointer;
+}
+
+/* Table sticky */
+
+.table-sticky {
+    position: relative;
+    left: 0px;
+    top: 0px;
+}
+.table-sticky table thead {
+    position: sticky;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+}
+.table-sticky table tbody {
+    z-index: 0;
+}
+.table-sticky table th:first-child,
+.table-sticky table td:first-child {
+    position: sticky;
+    left: 0px;
+    top: 0px;
+}
+.table-sticky table {
+    border-collapse: separate;
+    border-spacing: 0px;
+}
+.table-sticky table thead th {
+    border-top: 1px solid var(--bs-table-border-color);
+}
+.table-sticky table th,
+.table-sticky table td {
+    border-bottom: 1px solid var(--bs-table-border-color);
+}
+.table-sticky table th,
+.table-sticky table td {
+    border-right: 1px solid var(--bs-table-border-color);
+}
+.table-sticky table th:first-child,
+.table-sticky table td:first-child {
+    border-left: 1px solid var(--bs-table-border-color);
+}
+.table-sticky table th:not(:first-child),
+.table-sticky table td:not(:first-child) {
+    border-left: 0px;
+}
+
+/* validator */
+
+.invalid {
+    border: 1px solid red;
+}
