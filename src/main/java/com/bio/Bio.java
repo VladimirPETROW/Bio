@@ -5,6 +5,8 @@ import com.bio.database.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,9 +23,9 @@ public class Bio {
     static Logger log = Logger.getLogger(Bio.class.getName());
 
     public static void main(String[] args) {
-        String config = "config\\application.properties";
+        Path config = Paths.get("config","application.properties");
         Properties properties = new Properties();
-        try (FileReader reader = new FileReader(config)) {
+        try (FileReader reader = new FileReader(config.toFile())) {
             properties.load(reader);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -31,7 +33,7 @@ public class Bio {
             throw new RuntimeException(e);
         }
 
-        log.info("File config.properties found.");
+        log.info("File application.properties found.");
 
         Properties connProps = new Properties();
         String url = properties.getProperty("db.url");
