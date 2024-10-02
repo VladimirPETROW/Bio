@@ -1,4 +1,8 @@
 
+html, body {
+    height: 100%;
+}
+
 .w-min {
     width: 0px;
 }
@@ -14,20 +18,24 @@
     left: 0px;
     top: 0px;
 }
-.table-sticky table thead {
+.table-sticky table thead th:first-child {
     position: sticky;
     left: 0px;
+    top: 0px;
+    z-index: 2;
+}
+.table-sticky table thead th:not(:first-child) {
+    position: sticky;
     top: 0px;
     z-index: 1;
 }
 .table-sticky table tbody {
     z-index: 0;
 }
-.table-sticky table th:first-child,
-.table-sticky table td:first-child {
+.table-sticky table tbody th:first-child,
+.table-sticky table tbody td:first-child {
     position: sticky;
     left: 0px;
-    top: 0px;
 }
 .table-sticky table {
     border-collapse: separate;

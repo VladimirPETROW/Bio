@@ -18,11 +18,11 @@
                 </div>
                 <div class="modal-body">
                     <form class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-sm-6">
                             <label for="name" class="form-label">Название штамма</label>
                             <input type="text" class="form-control" data-valid-type="text" id="name">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-6">
                             <label for="doubling" class="form-label">Скорость удвоения, ч</label>
                             <input type="text" class="form-control" data-valid-type="number" id="doubling">
                         </div>
@@ -35,7 +35,7 @@
             </div>
         </div>
     </div>
-    <div class="d-flex flex-column vh-100 w-100 overflow-hidden p-1">
+    <div class="d-flex flex-column h-100 w-100 overflow-hidden p-1">
         <div class="row flex-shrink-1 m-0">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
@@ -83,17 +83,21 @@
                         </div>
                     </div>
                     <div class="row flex-grow-1 ms-0 me-0 mt-2 mb-0 organism-selected d-none">
-                        <div class="col fw-bold border bg-light d-table">
+                        <div class="col fw-bold border bg-light d-table h-100">
                             <div class="organism-selected-info d-table-cell align-middle text-center p-2"></div>
                         </div>
                     </div>
-                    <div class="row flex-shrink-1 m-0 pt-3 pb-2">
-                        <div class="col ps-0">
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createOrganism">Новый микроорганизм</button>
-                        </div>
-                        <div class="col organism-selected d-none text-end pe-0">
-                            <!--button type="button" class="btn btn-outline-primary organism-unselect">Отмена</button-->
-                            <button id="toExperiment" type="button" class="btn btn-outline-primary">В эксперимент</button>
+                    <div class="row flex-schrink-1 m-0 pt-3 pb-2">
+                        <div class="col p-0">
+                            <div class="row justify-content-between g-3">
+                                <div class="col-sm-auto">
+                                    <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#createOrganism">Новый микроорганизм</button>
+                                </div>
+                                <div class="col-sm-auto organism-selected d-none text-end">
+                                    <!--button type="button" class="btn btn-outline-primary organism-unselect">Отмена</button-->
+                                    <button id="toExperiment" type="button" class="btn btn-outline-primary w-100">В эксперимент</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
