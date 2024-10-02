@@ -1,12 +1,11 @@
 package com.bio.database;
 
 import com.bio.entity.FeedMaterial;
-import com.bio.entity.Reactive;
-import com.bio.value.ReactiveValue;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class FeedMaterialDatabase {
 
@@ -14,6 +13,10 @@ public class FeedMaterialDatabase {
     public static String insert = "INSERT INTO feed_material (feed, material, unit, count) VALUES (?, ?, ?, ?)";
     public static String selectByFeed = "SELECT material, unit, count FROM feed_material WHERE feed = ?";
     public static String deleteByFeed = "DELETE FROM feed_material WHERE feed = ?";
+
+    public static void init(Statement statement) throws SQLException {
+        statement.execute(createTable);
+    }
 
     public static void prepareInsert(PreparedStatement statement, Long feed, FeedMaterial feedMaterial) throws SQLException {
         statement.setLong(1, feed);

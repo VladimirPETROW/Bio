@@ -17,7 +17,10 @@ public class Server {
 
     public Server() {
         try {
-            httpServer = HttpServer.create(new InetSocketAddress("localhost", 80), 0);
+            String host = Bio.properties.getProperty("server.host", "localhost");
+            String portProperty = Bio.properties.getProperty("server.port");
+            int port = (portProperty != null) ? Integer.parseInt(portProperty) : 80;
+            httpServer = HttpServer.create(new InetSocketAddress(host, port), 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

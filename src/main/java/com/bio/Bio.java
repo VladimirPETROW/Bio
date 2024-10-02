@@ -18,13 +18,14 @@ public class Bio {
 
     Server server;
 
+    public static Properties properties;
     public static Connection database;
 
     static Logger log = Logger.getLogger(Bio.class.getName());
 
     public static void main(String[] args) {
         Path config = Paths.get("config","application.properties");
-        Properties properties = new Properties();
+        properties = new Properties();
         try (FileReader reader = new FileReader(config.toFile())) {
             properties.load(reader);
         } catch (FileNotFoundException e) {
@@ -57,14 +58,14 @@ public class Bio {
         }));
 
         try (Statement statement = database.createStatement()) {
-            statement.execute(OrganismDatabase.createTable);
-            statement.execute(ReactiveDatabase.createTable);
-            statement.execute(MaterialDatabase.createTable);
-            statement.execute(FeedDatabase.createTable);
-            statement.execute(FeedReactiveDatabase.createTable);
-            statement.execute(FeedMaterialDatabase.createTable);
-            statement.execute(FeedItemDatabase.createTable);
-            statement.execute(ExperimentDatabase.createTable);
+            OrganismDatabase.init(statement);
+            ReactiveDatabase.init(statement);
+            MaterialDatabase.init(statement);
+            FeedDatabase.init(statement);
+            FeedReactiveDatabase.init(statement);
+            FeedMaterialDatabase.init(statement);
+            FeedItemDatabase.init(statement);
+            ExperimentDatabase.init(statement);
             database.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);

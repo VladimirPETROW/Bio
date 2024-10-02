@@ -6,14 +6,21 @@ import com.bio.value.MaterialValue;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class MaterialDatabase {
 
     public static String createTable = "CREATE TABLE IF NOT EXISTS material (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name TEXT, unit TEXT, price INTEGER)";
+    public static String setIdSeq = "SELECT setval('material_id_seq', (SELECT max(id) FROM material))";
     public static String insert = "INSERT INTO material (name, unit, price) VALUES (?, ?, ?) RETURNING id";
     public static String select = "SELECT id, name, unit, price FROM material ORDER BY id";
     public static String selectById = "SELECT id, name, unit, price FROM material WHERE id = ?";
     public static String deleteById = "DELETE FROM material WHERE id = ?";
+
+    public static void init(Statement statement) throws SQLException {
+        statement.execute(createTable);
+        statement.execute(setIdSeq);
+    }
 
     public static void prepareInsert(PreparedStatement statement, MaterialValue materialValue) throws SQLException {
         statement.setString(1, materialValue.getName());

@@ -3,19 +3,22 @@ package com.bio.database;
 import com.bio.entity.Experiment;
 import com.bio.value.ExperimentValue;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
 
 public class ExperimentDatabase {
 
     public static String createTable = "CREATE TABLE IF NOT EXISTS experiment (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, created TIMESTAMP, organism BIGINT, feed BIGINT, whole INTEGER, product INTEGER, koe INTEGER)";
+    public static String setIdSeq = "SELECT setval('experiment_id_seq', (SELECT max(id) FROM experiment))";
     public static String insert = "INSERT INTO experiment (created, organism, feed, whole, product, koe) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
     public static String select = "SELECT id, created, organism, feed, whole, product, koe FROM experiment ORDER BY id";
     public static String selectById = "SELECT id, created, organism, feed, whole, product, koe FROM experiment WHERE id = ?";
     public static String deleteById = "DELETE FROM experiment WHERE id = ?";
+
+    public static void init(Statement statement) throws SQLException {
+        statement.execute(createTable);
+        statement.execute(setIdSeq);
+    }
 
     public static void prepareInsert(PreparedStatement statement, ExperimentValue experimentValue) throws SQLException {
         statement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));

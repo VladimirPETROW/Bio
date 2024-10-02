@@ -8,10 +8,16 @@ import java.sql.*;
 public class ReactiveDatabase {
 
     public static String createTable = "CREATE TABLE IF NOT EXISTS reactive (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name TEXT, kind TEXT, unit TEXT, price INTEGER)";
+    public static String setIdSeq = "SELECT setval('reactive_id_seq', (SELECT max(id) FROM reactive))";
     public static String insert = "INSERT INTO reactive (name, kind, unit, price) VALUES (?, ?, ?, ?) RETURNING id";
     public static String select = "SELECT id, name, kind, unit, price FROM reactive ORDER BY id";
     public static String selectById = "SELECT id, name, kind, unit, price FROM reactive WHERE id = ?";
     public static String deleteById = "DELETE FROM reactive WHERE id = ?";
+
+    public static void init(Statement statement) throws SQLException {
+        statement.execute(createTable);
+        statement.execute(setIdSeq);
+    }
 
     public static void prepareInsert(PreparedStatement statement, ReactiveValue reactiveValue) throws SQLException {
         statement.setString(1, reactiveValue.getName());

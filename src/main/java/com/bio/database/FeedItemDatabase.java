@@ -5,6 +5,7 @@ import com.bio.entity.FeedItem;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class FeedItemDatabase {
 
@@ -12,6 +13,10 @@ public class FeedItemDatabase {
     public static String insert = "INSERT INTO feed_item (feed, item, unit, count) VALUES (?, ?, ?, ?)";
     public static String selectByFeed = "SELECT item, unit, count FROM feed_item WHERE feed = ?";
     public static String deleteByFeed = "DELETE FROM feed_item WHERE feed = ?";
+
+    public static void init(Statement statement) throws SQLException {
+        statement.execute(createTable);
+    }
 
     public static void prepareInsert(PreparedStatement statement, Long feed, FeedItem feedItem) throws SQLException {
         statement.setLong(1, feed);
