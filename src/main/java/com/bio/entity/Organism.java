@@ -6,5 +6,6 @@ import lombok.Data;
 public class Organism {
     Long id;
     String name;
-    Integer doubling;
+    String kind;
+    Double doubling;
 }

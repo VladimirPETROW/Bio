@@ -6,5 +6,6 @@ import lombok.Data;
 public class MaterialValue {
     String name;
     String unit;
-    Integer price;
+    Double count;
+    Double price;
 }

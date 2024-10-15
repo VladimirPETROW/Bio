@@ -7,5 +7,6 @@ public class Material {
     Long id;
     String name;
     String unit;
-    Integer price;
+    Double count;
+    Double price;
 }

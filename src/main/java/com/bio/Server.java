@@ -40,6 +40,7 @@ public class Server {
         addContextCRUD("/api/organism/", new OrganismHandler(), HttpResponse::asJson);
         addContextCRUD("/api/reactive/", new ReactiveHandler(), HttpResponse::asJson);
         addContextCRUD("/api/material/", new MaterialHandler(), HttpResponse::asJson);
+        addContextCRUD("/api/solution/", new SolutionHandler(), HttpResponse::asJson);
         addContextCRUD("/api/feed/", new FeedHandler(), HttpResponse::asJson);
         addContextCRUD("/api/experiment/", new ExperimentHandler(), HttpResponse::asJson);
     }

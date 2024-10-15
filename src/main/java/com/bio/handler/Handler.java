@@ -1,5 +1,6 @@
 package com.bio.handler;
 
+import com.bio.Bio;
 import com.bio.HttpMethod;
 import com.bio.HttpResponse;
 import com.sun.net.httpserver.Headers;
@@ -43,16 +44,19 @@ public class Handler {
         else {
             try {
                 InputStream resource;
-                ClassLoader loader = this.getClass().getClassLoader();
-                resource = loader.getResourceAsStream(view + ".html");
-                //resource = Files.newInputStream(Paths.get("src\\main\\resources\\" + view + ".html"));
-                if (resource == null) {
-                    response = HttpResponse.createResponse(400);
+                String resourcesWhere = Bio.properties.getProperty("server.resources");
+                if (resourcesWhere != null) {
+                    resource = Files.newInputStream(Paths.get(resourcesWhere, view + ".html"));
                 }
                 else {
-                    String text = Handlers.readBytes(resource).toString();
-                    response = new HttpResponse(200, text);
+                    ClassLoader loader = this.getClass().getClassLoader();
+                    resource = loader.getResourceAsStream(view + ".html");
+                    if (resource == null) {
+                        throw new Exception(view + ".html not found.");
+                    }
                 }
+                String text = Handlers.readBytes(resource).toString();
+                response = new HttpResponse(200, text);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "", e);
                 response = HttpResponse.createResponse(400);
@@ -74,17 +78,30 @@ public class Handler {
         }
         String last = request.substring(start.length());
         InputStream resource;
-        ClassLoader loader = this.getClass().getClassLoader();
+        String resourcesWhere = Bio.properties.getProperty("server.resources");
         if (last.isEmpty()) {
-            resource = loader.getResourceAsStream("organism.html");
-            //resource = Files.newInputStream(Paths.get("src\\main\\resources\\organism.html"));
+            if (resourcesWhere != null) {
+                resource = Files.newInputStream(Paths.get(resourcesWhere, "organism.html"));
+            }
+            else {
+                ClassLoader loader = this.getClass().getClassLoader();
+                resource = loader.getResourceAsStream("organism.html");
+                if (resource == null) {
+                    return HttpResponse.createResponse(400);
+                }
+            }
         }
         else {
-            resource = loader.getResourceAsStream("static/" + last);
-            //resource = Files.newInputStream(Paths.get("src\\main\\resources\\static\\" + last));
-        }
-        if (resource == null) {
-            return HttpResponse.createResponse(400);
+            if (resourcesWhere != null) {
+                resource = Files.newInputStream(Paths.get(resourcesWhere, "static", last));
+            }
+            else {
+                ClassLoader loader = this.getClass().getClassLoader();
+                resource = loader.getResourceAsStream("static/" + last);
+                if (resource == null) {
+                    return HttpResponse.createResponse(400);
+                }
+            }
         }
         String text = Handlers.readBytes(resource).toString();
         return new HttpResponse(200, text);

@@ -8,31 +8,54 @@
     <link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
-    <div class="d-flex flex-column vh-100 w-100 overflow-hidden p-1">
+    <div class="d-flex flex-column h-100 w-100 overflow-hidden p-1">
         <div class="row flex-shrink-1 m-0">
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a href="/organism/" class="nav-link">Микроорганизмы</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/reactive/" class="nav-link">Реактивы</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/material/" class="nav-link active">Сырье</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/feed/" class="nav-link">Питательные среды</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/solution/" class="nav-link">Раствор</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/history/" class="nav-link">История</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/experiment/" class="nav-link">Эксперимент</a>
-                </li>
-            </ul>
+            <div class="col p-0">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item d-none d-lg-block">
+                        <a href="/organism/" class="nav-link">Микроорганизмы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/reactive/" class="nav-link">Реактивы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/material/" class="nav-link active">Сырье</a>
+                    </li>
+                    <li class="nav-item d-none d-sm-block">
+                        <a href="/feed/" class="nav-link">Питательные среды</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/solution/" class="nav-link">Раствор</a>
+                    </li>
+                    <li class="nav-item d-none d-md-block">
+                        <a href="/history/" class="nav-link">История</a>
+                    </li>
+                    <li class="nav-item d-none d-md-block">
+                        <a href="/experiment/" class="nav-link">Эксперимент</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-auto p-0 d-lg-none">
+                <button type="button" class="btn btn-light bg-light rounded-start-0 rounded-bottom-0 h-100" data-bs-toggle="dropdown">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="100%" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"></path>
+                    </svg>
+                </button>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-item d-lg-none">
+                        <a href="/organism/" class="nav-link">Микроорганизмы</a>
+                    </li>
+                    <li class="dropdown-item d-sm-none">
+                        <a href="/feed/" class="nav-link">Питательные среды</a>
+                    </li>
+                    <li class="dropdown-item d-md-none">
+                        <a href="/history/" class="nav-link">История</a>
+                    </li>
+                    <li class="dropdown-item d-md-none">
+                        <a href="/experiment/" class="nav-link">Эксперимент</a>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div class="row flex-shrink-1 m-0">
             &nbsp;

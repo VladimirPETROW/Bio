@@ -3,8 +3,9 @@ package com.bio.entity;
 import lombok.Data;
 
 @Data
-public class FeedReactive {
+public class SolutionReactive {
     Long reactive;
     String unit;
-    Integer count;
+    Double count;
+    String apply;
 }

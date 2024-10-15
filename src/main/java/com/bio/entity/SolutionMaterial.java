@@ -3,8 +3,9 @@ package com.bio.entity;
 import lombok.Data;
 
 @Data
-public class FeedMaterial {
+public class SolutionMaterial {
     Long material;
     String unit;
-    Integer count;
+    Double count;
+    String apply;
 }

@@ -33,8 +33,19 @@ $(document).ready(function() {
         validate: function(doc) {
             var valid = true;
             var test = function(i, elem) {
+                var validEmpty = $(elem).attr("data-valid-empty");
+                var value = $(elem).val();
+                if (!value) {
+                    if (validEmpty) {
+                        if (!(validEmpty.toLowerCase() === "true")) {
+                            $(elem).addClass("invalid");
+                            valid = false;
+                        }
+                        return;
+                    }
+                }
                 var validType = $(elem).attr("data-valid-type");
-                if (validType && !$.validator.type[validType]($(elem).val())) {
+                if (validType && !$.validator.type[validType](value)) {
                     $(elem).addClass("invalid");
                     valid = false;
                 }

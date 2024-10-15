@@ -66,7 +66,9 @@ $(document).ready(function() {
         var value = {};
         for (var i = 0; i < inputs.length; i++) {
             var input = inputs[i];
-            value[input.id] = input.value;
+            if (input.value) {
+                value[input.id] = input.value;
+            }
         }
         if ($.validator.validate($("#createOrganism form"))) {
             $.ajax({

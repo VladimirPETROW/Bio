@@ -30,12 +30,14 @@ public class ReactiveHandler extends HandlerCRUD {
         if (reactiveValue.getName() == null) {
             error.append("Не указано название.");
         }
+        /*
         if (reactiveValue.getKind() == null) {
             if (error.length() > 0) {
                 error.append(" ");
             }
             error.append("Не указан вид.");
         }
+        */
         if (error.length() > 0) {
             return new HttpResponse(400, error.toString());
         }
@@ -44,11 +46,12 @@ public class ReactiveHandler extends HandlerCRUD {
             ReactiveDatabase.prepareInsert(statement, reactiveValue);
             ResultSet rs = statement.executeQuery();
             rs.next();
-            Long id = rs.getLong(1);
+            //Long id = rs.getLong(1);
+            Reactive reactive = ReactiveDatabase.get(rs);
             Bio.database.commit();
-            String message = String.format("Реактив %d добавлен.", id);
+            String message = String.format("Реактив %d добавлен.", reactive.getId());
             log.info(message);
-            return new HttpResponse(200, message);
+            return new HttpResponse(200, reactive);
         }
     }
 

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class ExperimentDatabase {
 
-    public static String createTable = "CREATE TABLE IF NOT EXISTS experiment (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, created TIMESTAMP, organism BIGINT, feed BIGINT, whole INTEGER, product INTEGER, koe INTEGER)";
+    public static String createTable = "CREATE TABLE IF NOT EXISTS experiment (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, created TIMESTAMP, organism BIGINT, feed BIGINT, whole NUMERIC(8, 4), product NUMERIC(8, 4), koe NUMERIC(8, 4))";
     public static String setIdSeq = "SELECT setval('experiment_id_seq', (SELECT max(id) FROM experiment))";
     public static String insert = "INSERT INTO experiment (created, organism, feed, whole, product, koe) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
     public static String select = "SELECT id, created, organism, feed, whole, product, koe FROM experiment ORDER BY id";
@@ -35,11 +35,11 @@ public class ExperimentDatabase {
         experiment.setCreated(rs.getTimestamp(2).toLocalDateTime());
         experiment.setOrganism(rs.getLong(3));
         experiment.setFeed(rs.getLong(4));
-        experiment.setWhole(rs.getInt(5));
+        experiment.setWhole(rs.getDouble(5));
         if (rs.wasNull()) experiment.setWhole(null);
-        experiment.setProduct(rs.getInt(6));
+        experiment.setProduct(rs.getDouble(6));
         if (rs.wasNull()) experiment.setProduct(null);
-        experiment.setKoe(rs.getInt(7));
+        experiment.setKoe(rs.getDouble(7));
         if (rs.wasNull()) experiment.setKoe(null);
         return experiment;
     }

@@ -3,7 +3,6 @@ package com.bio.entity;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class Experiment {
@@ -11,7 +10,7 @@ public class Experiment {
     LocalDateTime created;
     Long organism;
     Long feed;
-    Integer whole;
-    Integer product;
-    Integer koe;
+    Double whole;
+    Double product;
+    Double koe;
 }

@@ -7,5 +7,6 @@ public class ReactiveValue {
     String name;
     String kind;
     String unit;
-    Integer price;
+    Double count;
+    Double price;
 }

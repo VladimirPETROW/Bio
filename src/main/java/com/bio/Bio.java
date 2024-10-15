@@ -61,10 +61,11 @@ public class Bio {
             OrganismDatabase.init(statement);
             ReactiveDatabase.init(statement);
             MaterialDatabase.init(statement);
+            SolutionDatabase.init(statement);
             FeedDatabase.init(statement);
-            FeedReactiveDatabase.init(statement);
-            FeedMaterialDatabase.init(statement);
-            FeedItemDatabase.init(statement);
+            SolutionReactiveDatabase.init(statement);
+            SolutionMaterialDatabase.init(statement);
+            SolutionRefDatabase.init(statement);
             ExperimentDatabase.init(statement);
             database.commit();
         } catch (SQLException e) {
