@@ -11,10 +11,7 @@ import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 @Log
@@ -33,13 +30,13 @@ public class FeedHandler extends HandlerCRUD {
         if (error.length() > 0) {
             return new HttpResponse(400, error.toString());
         }
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(FeedDatabase.insert)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.insert)) {
             FeedDatabase.prepareInsert(statement, feedValue);
             ResultSet rs = statement.executeQuery();
             rs.next();
             Long id = rs.getLong(1);
-            Bio.database.commit();
+            connection.commit();
             String message = String.format("Питательная среда %d добавлена.", id);
             log.info(message);
             return new HttpResponse(200, message);
@@ -47,8 +44,8 @@ public class FeedHandler extends HandlerCRUD {
     }
 
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {
-        Bio.database.rollback();
-        try (Statement statement = Bio.database.createStatement()) {
+        Connection connection = Bio.database.getConnection();
+        try (Statement statement = connection.createStatement()) {
             ArrayList<Feed> feeds = new ArrayList<>();
             ResultSet rs = statement.executeQuery(FeedDatabase.select);
             while (rs.next()) {
@@ -60,8 +57,8 @@ public class FeedHandler extends HandlerCRUD {
     }
 
     public HttpResponse readById(HttpExchange exchange, Long id) throws SQLException {
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(FeedDatabase.selectById)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.selectById)) {
             FeedDatabase.prepareSelectById(statement, id);
             ResultSet rs = statement.executeQuery();
             if (!rs.next()) {
@@ -75,8 +72,8 @@ public class FeedHandler extends HandlerCRUD {
     }
 
     public HttpResponse deleteById(HttpExchange exchange, Long id) throws SQLException {
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(FeedDatabase.deleteById)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.deleteById)) {
             FeedDatabase.prepareDeleteById(statement, id);
             String message;
             if (statement.executeUpdate() > 0) {
@@ -85,7 +82,7 @@ public class FeedHandler extends HandlerCRUD {
             else {
                 message = String.format("Питательная среда %d не найдена.", id);
             }
-            Bio.database.commit();
+            connection.commit();
             log.info(message);
             return new HttpResponse(200, message);
         }

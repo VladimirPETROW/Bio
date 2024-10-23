@@ -11,10 +11,7 @@ import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 @Log
@@ -41,14 +38,14 @@ public class ReactiveHandler extends HandlerCRUD {
         if (error.length() > 0) {
             return new HttpResponse(400, error.toString());
         }
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(ReactiveDatabase.insert)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(ReactiveDatabase.insert)) {
             ReactiveDatabase.prepareInsert(statement, reactiveValue);
             ResultSet rs = statement.executeQuery();
             rs.next();
             //Long id = rs.getLong(1);
             Reactive reactive = ReactiveDatabase.get(rs);
-            Bio.database.commit();
+            connection.commit();
             String message = String.format("Реактив %d добавлен.", reactive.getId());
             log.info(message);
             return new HttpResponse(200, reactive);
@@ -56,8 +53,8 @@ public class ReactiveHandler extends HandlerCRUD {
     }
 
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {
-        Bio.database.rollback();
-        try (Statement statement = Bio.database.createStatement()) {
+        Connection connection = Bio.database.getConnection();
+        try (Statement statement = connection.createStatement()) {
             ArrayList<Reactive> reactives = new ArrayList<>();
             ResultSet rs = statement.executeQuery(ReactiveDatabase.select);
             while (rs.next()) {
@@ -69,8 +66,8 @@ public class ReactiveHandler extends HandlerCRUD {
     }
 
     public HttpResponse readById(HttpExchange exchange, Long id) throws SQLException {
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(ReactiveDatabase.selectById)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(ReactiveDatabase.selectById)) {
             ReactiveDatabase.prepareSelectById(statement, id);
             ResultSet rs = statement.executeQuery();
             if (!rs.next()) {
@@ -84,8 +81,8 @@ public class ReactiveHandler extends HandlerCRUD {
     }
 
     public HttpResponse deleteById(HttpExchange exchange, Long id) throws SQLException {
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(ReactiveDatabase.deleteById)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(ReactiveDatabase.deleteById)) {
             ReactiveDatabase.prepareDeleteById(statement, id);
             String message;
             if (statement.executeUpdate() > 0) {
@@ -94,7 +91,7 @@ public class ReactiveHandler extends HandlerCRUD {
             else {
                 message = String.format("Реактив %d не найден.", id);
             }
-            Bio.database.commit();
+            connection.commit();
             log.info(message);
             return new HttpResponse(200, message);
         }

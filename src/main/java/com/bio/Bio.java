@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -19,7 +18,7 @@ public class Bio {
     Server server;
 
     public static Properties properties;
-    public static Connection database;
+    public static DatabaseConnection database;
 
     static Logger log = Logger.getLogger(Bio.class.getName());
 
@@ -41,8 +40,7 @@ public class Bio {
         connProps.put("user", properties.getProperty("db.user"));
         connProps.put("password", properties.getProperty("db.password"));
         try {
-            database = DriverManager.getConnection(url, connProps);
-            database.setAutoCommit(false);
+            database = new DatabaseConnection(url, connProps, false);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -57,17 +55,20 @@ public class Bio {
             }
         }));
 
-        try (Statement statement = database.createStatement()) {
-            OrganismDatabase.init(statement);
-            ReactiveDatabase.init(statement);
-            MaterialDatabase.init(statement);
-            SolutionDatabase.init(statement);
-            FeedDatabase.init(statement);
-            SolutionReactiveDatabase.init(statement);
-            SolutionMaterialDatabase.init(statement);
-            SolutionRefDatabase.init(statement);
-            ExperimentDatabase.init(statement);
-            database.commit();
+        try {
+            Connection connection = database.getConnection();
+            try (Statement statement = connection.createStatement()) {
+                OrganismDatabase.init(statement);
+                ReactiveDatabase.init(statement);
+                MaterialDatabase.init(statement);
+                SolutionDatabase.init(statement);
+                FeedDatabase.init(statement);
+                SolutionReactiveDatabase.init(statement);
+                SolutionMaterialDatabase.init(statement);
+                SolutionRefDatabase.init(statement);
+                ExperimentDatabase.init(statement);
+                connection.commit();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

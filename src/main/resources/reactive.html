@@ -50,7 +50,7 @@
         <div class="row flex-shrink-1 m-0">
             <div class="col p-0">
                 <ul class="nav nav-tabs">
-                    <li class="nav-item d-none d-lg-block">
+                    <li class="nav-item d-none d-md-block">
                         <a href="/organism/" class="nav-link">Микроорганизмы</a>
                     </li>
                     <li class="nav-item">
@@ -59,43 +59,37 @@
                     <li class="nav-item">
                         <a href="/material/" class="nav-link">Сырье</a>
                     </li>
-                    <li class="nav-item d-none d-sm-block">
-                        <a href="/feed/" class="nav-link">Питательные среды</a>
-                    </li>
                     <li class="nav-item">
-                        <a href="/solution/" class="nav-link">Раствор</a>
+                        <a href="/feed/" class="nav-link">Питательные среды</a>
                     </li>
                     <li class="nav-item d-none d-md-block">
                         <a href="/history/" class="nav-link">История</a>
                     </li>
-                    <li class="nav-item d-none d-md-block">
+                    <li class="nav-item d-none d-sm-block">
                         <a href="/experiment/" class="nav-link">Эксперимент</a>
                     </li>
                 </ul>
             </div>
-            <div class="col-auto p-0 d-lg-none">
+            <div class="col-auto p-0 d-md-none">
                 <button type="button" class="btn btn-light bg-light rounded-start-0 rounded-bottom-0 h-100" data-bs-toggle="dropdown">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="100%" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"></path>
                     </svg>
                 </button>
                 <ul class="dropdown-menu">
-                    <li class="dropdown-item d-lg-none">
+                    <li class="dropdown-item d-md-none">
                         <a href="/organism/" class="nav-link">Микроорганизмы</a>
-                    </li>
-                    <li class="dropdown-item d-sm-none">
-                        <a href="/feed/" class="nav-link">Питательные среды</a>
                     </li>
                     <li class="dropdown-item d-md-none">
                         <a href="/history/" class="nav-link">История</a>
                     </li>
-                    <li class="dropdown-item d-md-none">
+                    <li class="dropdown-item d-sm-none">
                         <a href="/experiment/" class="nav-link">Эксперимент</a>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="row flex-shrink-1 m-0">
+        <div class="row flex-shrink-1 m-0 p-2">
             &nbsp;
         </div>
         <div class="row flex-grow-1 overflow-hidden m-0 p-1 reactive d-none">
@@ -121,7 +115,7 @@
                             <div class="reactive-selected-info d-table-cell align-middle text-center p-2 text-break"></div>
                         </div>
                     </div>
-                    <div class="row flex-schrink-1 m-0 pt-3 pb-2">
+                    <div class="row flex-schrink-1 m-0 pt-2 pb-1">
                         <div class="col p-0">
                             <div class="row justify-content-between g-3">
                                 <div class="col-sm-auto">
@@ -129,7 +123,7 @@
                                 </div>
                                 <div class="col-sm-auto reactive-selected d-none text-end">
                                     <!--button type="button" class="btn btn-outline-primary reactive-unselect">Отмена</button-->
-                                    <button id="toExperiment" type="button" class="btn btn-outline-primary w-100">В раствор</button>
+                                    <button id="toExperiment" type="button" class="btn btn-outline-primary w-100">В эксперимент</button>
                                 </div>
                             </div>
                         </div>

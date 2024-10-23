@@ -4,10 +4,12 @@ $(document).ready(function() {
         data: null,
 
         init: function() {
+            /*
             $("#toExperiment").on("click", function() {
                 $(".reactive-selected-info").html("");
                 $(".reactive-selected").addClass("d-none");
             });
+            */
         },
 
         load: function() {

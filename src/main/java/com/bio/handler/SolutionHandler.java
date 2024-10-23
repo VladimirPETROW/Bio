@@ -16,10 +16,7 @@ import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +36,10 @@ public class SolutionHandler extends HandlerCRUD {
         if (error.length() > 0) {
             return new HttpResponse(400, error.toString());
         }
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(SolutionDatabase.insert);
-             PreparedStatement statementReactive = Bio.database.prepareStatement(SolutionReactiveDatabase.insert);
-             PreparedStatement statementMaterial = Bio.database.prepareStatement(SolutionMaterialDatabase.insert)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(SolutionDatabase.insert);
+             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.insert);
+             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.insert)) {
             SolutionDatabase.prepareInsert(statement, solutionValue);
             ResultSet rs = statement.executeQuery();
             rs.next();
@@ -61,7 +58,7 @@ public class SolutionHandler extends HandlerCRUD {
                     statementMaterial.executeUpdate();
                 }
             }
-            Bio.database.commit();
+            connection.commit();
             String message = String.format("Раствор %d добавлен.", id);
             log.info(message);
             return new HttpResponse(200, message);
@@ -69,10 +66,10 @@ public class SolutionHandler extends HandlerCRUD {
     }
 
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {
-        Bio.database.rollback();
-        try (Statement statement = Bio.database.createStatement();
-             PreparedStatement statementReactive = Bio.database.prepareStatement(SolutionReactiveDatabase.selectByFeed);
-             PreparedStatement statementMaterial = Bio.database.prepareStatement(SolutionMaterialDatabase.selectByFeed)) {
+        Connection connection = Bio.database.getConnection();
+        try (Statement statement = connection.createStatement();
+             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.selectByFeed);
+             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.selectByFeed)) {
             ArrayList<Solution> solutions = new ArrayList<>();
             ResultSet rs = statement.executeQuery(SolutionDatabase.select);
             while (rs.next()) {
@@ -105,10 +102,10 @@ public class SolutionHandler extends HandlerCRUD {
     }
 
     public HttpResponse readById(HttpExchange exchange, Long id) throws SQLException {
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(SolutionDatabase.selectById);
-             PreparedStatement statementReactive = Bio.database.prepareStatement(SolutionReactiveDatabase.selectByFeed);
-             PreparedStatement statementMaterial = Bio.database.prepareStatement(SolutionMaterialDatabase.selectByFeed)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(SolutionDatabase.selectById);
+             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.selectByFeed);
+             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.selectByFeed)) {
             FeedDatabase.prepareSelectById(statement, id);
             ResultSet rs = statement.executeQuery();
             if (!rs.next()) {
@@ -142,10 +139,10 @@ public class SolutionHandler extends HandlerCRUD {
     }
 
     public HttpResponse deleteById(HttpExchange exchange, Long id) throws SQLException {
-        Bio.database.rollback();
-        try (PreparedStatement statement = Bio.database.prepareStatement(SolutionDatabase.deleteById);
-             PreparedStatement statementReactive = Bio.database.prepareStatement(SolutionReactiveDatabase.deleteByFeed);
-             PreparedStatement statementMaterial = Bio.database.prepareStatement(SolutionMaterialDatabase.deleteByFeed)) {
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(SolutionDatabase.deleteById);
+             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.deleteByFeed);
+             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.deleteByFeed)) {
             SolutionDatabase.prepareDeleteById(statement, id);
             String message;
             if (statement.executeUpdate() > 0) {
@@ -160,7 +157,7 @@ public class SolutionHandler extends HandlerCRUD {
             // materials
             SolutionMaterialDatabase.prepareDeleteBySolution(statementMaterial, id);
             statementMaterial.executeUpdate();
-            Bio.database.commit();
+            connection.commit();
             log.info(message);
             return new HttpResponse(200, message);
         }

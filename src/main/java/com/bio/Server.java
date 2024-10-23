@@ -33,8 +33,8 @@ public class Server {
         addContextView("/organism/", HttpMethod.GET, "organism", HttpResponse::asText);
         addContextView("/reactive/", HttpMethod.GET, "reactive", HttpResponse::asText);
         addContextView("/material/", HttpMethod.GET, "material", HttpResponse::asText);
-        addContextView("/solution/", HttpMethod.GET, "solution", HttpResponse::asText);
         addContextView("/feed/", HttpMethod.GET, "feed", HttpResponse::asText);
+        addContextView("/solution/", HttpMethod.GET, "solution", HttpResponse::asText);
         addContextView("/history/", HttpMethod.GET, "history", HttpResponse::asText);
         addContextView("/experiment/", HttpMethod.GET, "experiment", HttpResponse::asText);
         addContextCRUD("/api/organism/", new OrganismHandler(), HttpResponse::asJson);
