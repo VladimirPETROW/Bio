@@ -11,8 +11,8 @@ public class SolutionMaterialDatabase {
 
     public static String createTable = "CREATE TABLE IF NOT EXISTS solution_material (solution BIGINT, material BIGINT, unit TEXT, count NUMERIC(8, 4), apply TEXT)";
     public static String insert = "INSERT INTO solution_material (solution, material, unit, count, apply) VALUES (?, ?, ?, ?, ?)";
-    public static String selectByFeed = "SELECT material, unit, count, apply FROM solution_material WHERE solution = ?";
-    public static String deleteByFeed = "DELETE FROM solution_material WHERE solution = ?";
+    public static String selectBySolution = "SELECT material, unit, count, apply FROM solution_material WHERE solution = ?";
+    public static String deleteBySolution = "DELETE FROM solution_material WHERE solution = ?";
 
     public static void init(Statement statement) throws SQLException {
         statement.execute(createTable);

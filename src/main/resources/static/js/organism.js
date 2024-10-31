@@ -54,23 +54,23 @@ $(document).ready(function() {
     $.organism.init();
     $.organism.load();
 
-    $("#createOrganism").on("show.bs.modal", () => {
-        $("#createOrganism form :input").val('');
-        $.validator.valid($("#createOrganism form"));
+    $("#createOrganism_view").on("show.bs.modal", () => {
+        $("#createOrganism_view form :input").val('');
+        $.validator.valid($("#createOrganism_view form"));
     });
-    $("#createOrganism").on("shown.bs.modal", () => {
-        $("#createOrganism form #name").trigger('focus');
+    $("#createOrganism_view").on("shown.bs.modal", () => {
+        $("#createOrganism_name").trigger('focus');
     });
-    $("#createOrganism #save").on("click", () => {
-        var inputs = $("#createOrganism form input");
+    $("#createOrganism_create").on("click", () => {
+        var inputs = $("#createOrganism_view form input");
         var value = {};
         for (var i = 0; i < inputs.length; i++) {
             var input = inputs[i];
             if (input.value) {
-                value[input.id] = input.value;
+                value[input.name] = input.value.trim();
             }
         }
-        if ($.validator.validate($("#createOrganism form"))) {
+        if ($.validator.validate($("#createOrganism_view form"))) {
             $.ajax({
                 method: "POST",
                 url: "/api/organism/",
@@ -80,7 +80,7 @@ $(document).ready(function() {
             }).done(function(organism) {
                 $.organism.select(organism.id);
                 $.organism.load();
-                bootstrap.Modal.getInstance("#createOrganism").hide();
+                bootstrap.Modal.getInstance("#createOrganism_view").hide();
             }).fail(function(result) {
                 var response = result.responseJSON;
                 alert(response.message);

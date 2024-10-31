@@ -9,7 +9,7 @@
     <link href="/css/organism.css" rel="stylesheet">
 </head>
 <body>
-    <div class="modal" id="createOrganism" tabindex="-1">
+    <div class="modal" id="createOrganism_view" tabindex="-1">
         <div class="modal-dialog modal-fullscreen-xl-down modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -19,18 +19,18 @@
                 <div class="modal-body">
                     <form class="row g-3">
                         <div class="col-sm-6">
-                            <label for="name" class="form-label">Название штамма</label>
-                            <input type="text" class="form-control" data-valid-type="text" id="name">
+                            <label for="createOrganism_name" class="form-label">Название штамма</label>
+                            <input id="createOrganism_name" name="name" type="text" class="form-control" data-valid-type="text">
                         </div>
                         <div class="col-sm-6">
-                            <label for="doubling" class="form-label">Скорость удвоения, ч</label>
-                            <input type="text" class="form-control" data-valid-type="number" id="doubling">
+                            <label for="createOrganism_doubling" class="form-label">Скорость удвоения, ч</label>
+                            <input id="createOrganism_doubling" name="doubling" type="text" class="form-control" data-valid-type="number">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-outline-primary" id="save">Сохранить</button>
+                    <button type="button" class="btn btn-outline-primary" id="createOrganism_create">Создать</button>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                     <li class="nav-item d-none d-sm-block">
                         <a href="/feed/" class="nav-link">Питательные среды</a>
                     </li>
-                    <li class="nav-item d-none d-md-block">
+                    <li class="nav-item d-none d-lg-block">
                         <a href="/history/" class="nav-link">История</a>
                     </li>
                     <li class="nav-item">
@@ -59,7 +59,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-auto p-0 d-md-none">
+            <div class="col-auto p-0 d-lg-none">
                 <button type="button" class="btn btn-light bg-light rounded-start-0 rounded-bottom-0 h-100" data-bs-toggle="dropdown">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="100%" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"></path>
@@ -75,7 +75,7 @@
                     <li class="dropdown-item d-sm-none">
                         <a href="/feed/" class="nav-link">Питательные среды</a>
                     </li>
-                    <li class="dropdown-item d-md-none">
+                    <li class="dropdown-item d-lg-none">
                         <a href="/history/" class="nav-link">История</a>
                     </li>
                 </ul>
@@ -111,7 +111,7 @@
                         <div class="col p-0">
                             <div class="row justify-content-between g-2">
                                 <div class="col-sm-auto">
-                                    <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#createOrganism">Новый микроорганизм</button>
+                                    <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#createOrganism_view">Новый микроорганизм</button>
                                 </div>
                                 <div class="col-sm-auto organism-selected d-none text-end">
                                     <!--button type="button" class="btn btn-outline-primary organism-unselect">Отмена</button-->

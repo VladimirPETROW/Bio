@@ -1,10 +1,9 @@
-package com.bio.entity;
+package com.bio.value;
 
 import lombok.Data;
 
 @Data
-public class SolutionReactive {
-    Reactive reactive;
+public class SolutionReactiveValue {
     String unit;
     Double count;
     String apply;

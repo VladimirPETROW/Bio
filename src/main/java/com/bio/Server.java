@@ -33,14 +33,15 @@ public class Server {
         addContextView("/organism/", HttpMethod.GET, "organism", HttpResponse::asText);
         addContextView("/reactive/", HttpMethod.GET, "reactive", HttpResponse::asText);
         addContextView("/material/", HttpMethod.GET, "material", HttpResponse::asText);
-        addContextView("/feed/", HttpMethod.GET, "feed", HttpResponse::asText);
-        addContextView("/solution/", HttpMethod.GET, "solution", HttpResponse::asText);
+        //addContextView("/feed/", HttpMethod.GET, "feed", HttpResponse::asText);
+        addContextViewItem("/feed/", HttpMethod.GET, "feed", HttpResponse::asText);
         addContextView("/history/", HttpMethod.GET, "history", HttpResponse::asText);
         addContextView("/experiment/", HttpMethod.GET, "experiment", HttpResponse::asText);
         addContextCRUD("/api/organism/", new OrganismHandler(), HttpResponse::asJson);
         addContextCRUD("/api/reactive/", new ReactiveHandler(), HttpResponse::asJson);
         addContextCRUD("/api/material/", new MaterialHandler(), HttpResponse::asJson);
         addContextCRUD("/api/solution/", new SolutionHandler(), HttpResponse::asJson);
+        addContextNestedCRUD("/api/solutionReactive/", new SolutionReactiveHandler(), HttpResponse::asJson);
         addContextCRUD("/api/feed/", new FeedHandler(), HttpResponse::asJson);
         addContextCRUD("/api/experiment/", new ExperimentHandler(), HttpResponse::asJson);
     }
@@ -53,8 +54,16 @@ public class Server {
         httpServer.createContext(path, exchange -> handler.handleView(method, view, exchange, formatter));
     }
 
+    void addContextViewItem(String path, HttpMethod method, String view, Function<HttpResponse, HttpResponse> formatter) {
+        httpServer.createContext(path, exchange -> handler.handleViewItem(method, view, exchange, formatter));
+    }
+
     void addContextCRUD(String path, HandlerCRUD handlerCRUD, Function<HttpResponse, HttpResponse> formatter) {
         httpServer.createContext(path, exchange -> handlerCRUD.handleCRUD(exchange, formatter));
+    }
+
+    void addContextNestedCRUD(String path, HandlerNestedCRUD handlerNestedCRUD, Function<HttpResponse, HttpResponse> formatter) {
+        httpServer.createContext(path, exchange -> handlerNestedCRUD.handleNestedCRUD(exchange, formatter));
     }
 
     void start() {

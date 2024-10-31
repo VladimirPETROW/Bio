@@ -7,6 +7,10 @@ html, body {
     width: 0px;
 }
 
+.rs-none {
+    resize: none;
+}
+
 .item {
     cursor: pointer;
 }

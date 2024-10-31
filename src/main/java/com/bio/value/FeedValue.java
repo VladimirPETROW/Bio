@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class FeedValue {
-    Long solution;
+    Long base;
+    SolutionValue solution;
     String apply;
     Long organism;
     String purpose;

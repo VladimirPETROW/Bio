@@ -3,8 +3,16 @@ package com.bio.handler;
 import com.bio.Bio;
 import com.bio.HttpResponse;
 import com.bio.database.FeedDatabase;
+import com.bio.database.SolutionDatabase;
+import com.bio.database.SolutionReactiveDatabase;
 import com.bio.entity.Feed;
+import com.bio.entity.Solution;
+import com.bio.entity.SolutionReactive;
+import com.bio.service.EntityNotFoundException;
+import com.bio.service.FeedService;
+import com.bio.service.SolutionService;
 import com.bio.value.FeedValue;
+import com.bio.value.SolutionValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import lombok.extern.java.Log;
@@ -13,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Log
 public class FeedHandler extends HandlerCRUD {
@@ -24,22 +33,61 @@ public class FeedHandler extends HandlerCRUD {
         //mapper.registerModule(new JavaTimeModule());
         FeedValue feedValue = mapper.readValue(request, FeedValue.class);
         StringBuffer error = new StringBuffer();
-        if (feedValue.getSolution() == null) {
-            error.append("Не указан раствор.");
+        String name = feedValue.getSolution().getName();
+        if (name == null) {
+            error.append("Не указано название.");
         }
         if (error.length() > 0) {
             return new HttpResponse(400, error.toString());
         }
+        boolean exist = FeedService.existByName(name);
+        if (exist) {
+            return new HttpResponse(400, "Питательная среда \"" + name + "\" уже существует.");
+        }
+        Feed baseFeed = null;
+        Long baseFeedId = feedValue.getBase();
+        if (baseFeedId != null) {
+            try {
+                baseFeed = FeedService.getById(baseFeedId);
+            }
+            catch (EntityNotFoundException e) {
+                String message = e.getMessage();
+                log.info(message);
+                return new HttpResponse(200, message);
+            }
+        }
         Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.insert)) {
-            FeedDatabase.prepareInsert(statement, feedValue);
-            ResultSet rs = statement.executeQuery();
+        try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.insert);
+             PreparedStatement statementSolution = connection.prepareStatement(SolutionDatabase.insert)) {
+            // solution
+            SolutionValue solutionValue = feedValue.getSolution();
+            SolutionDatabase.prepareInsert(statementSolution, solutionValue);
+            ResultSet rs = statementSolution.executeQuery();
             rs.next();
-            Long id = rs.getLong(1);
+            Solution solution = SolutionDatabase.get(rs);
+            // feed
+            FeedDatabase.prepareInsert(statement, feedValue, solution.getId());
+            rs = statement.executeQuery();
+            rs.next();
+            Feed feed = FeedDatabase.get(rs);
+            if (baseFeed != null) {
+                List<SolutionReactive> solutionReactives = baseFeed.getSolution().getReactives();
+                if ((solutionReactives != null) && (solutionReactives.size() > 0)) {
+                    try (PreparedStatement statementSolutionReactive = connection.prepareStatement(SolutionReactiveDatabase.insert)) {
+                        Long solutionTo = solution.getId();
+                        for (SolutionReactive solutionReactive : solutionReactives) {
+                            SolutionReactiveDatabase.prepareInsert(statementSolutionReactive, solutionTo, solutionReactive);
+                            int rc = statementSolutionReactive.executeUpdate();
+                        }
+                    }
+                    solution.setReactives(solutionReactives);
+                }
+            }
+            feed.setSolution(solution);
             connection.commit();
-            String message = String.format("Питательная среда %d добавлена.", id);
+            String message = String.format("Питательная среда %d добавлена.", feed.getId());
             log.info(message);
-            return new HttpResponse(200, message);
+            return new HttpResponse(200, feed);
         }
     }
 
@@ -50,6 +98,17 @@ public class FeedHandler extends HandlerCRUD {
             ResultSet rs = statement.executeQuery(FeedDatabase.select);
             while (rs.next()) {
                 Feed feed = FeedDatabase.get(rs);
+                // solution
+                try {
+                    Long solutionId = feed.getSolution().getId();
+                    Solution solution = SolutionService.getById(solutionId);
+                    feed.setSolution(solution);
+                }
+                catch (EntityNotFoundException e) {
+                    String message = e.getMessage();
+                    log.info(message);
+                    return new HttpResponse(200, message);
+                }
                 feeds.add(feed);
             }
             return new HttpResponse(200, feeds.toArray());
@@ -57,24 +116,27 @@ public class FeedHandler extends HandlerCRUD {
     }
 
     public HttpResponse readById(HttpExchange exchange, Long id) throws SQLException {
-        Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.selectById)) {
-            FeedDatabase.prepareSelectById(statement, id);
-            ResultSet rs = statement.executeQuery();
-            if (!rs.next()) {
-                String message = String.format("Питательная среда %d не найдена.", id);
-                log.info(message);
-                return new HttpResponse(200, message);
-            }
-            Feed feed = FeedDatabase.get(rs);
+        try {
+            Feed feed = FeedService.getById(id);
             return new HttpResponse(200, feed);
+        } catch (EntityNotFoundException e) {
+            String message = e.getMessage();
+            log.info(message);
+            return new HttpResponse(200, message);
         }
     }
+
+    /*
+    public HttpResponse updateById(HttpExchange exchange, Long id) throws IOException, SQLException {
+        return null;
+    }
+    */
 
     public HttpResponse deleteById(HttpExchange exchange, Long id) throws SQLException {
         Connection connection = Bio.database.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.deleteById)) {
             FeedDatabase.prepareDeleteById(statement, id);
+            // TODO delete corresponding solutions
             String message;
             if (statement.executeUpdate() > 0) {
                 message = String.format("Питательная среда %d удалена.", id);

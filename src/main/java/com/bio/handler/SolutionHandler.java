@@ -2,13 +2,14 @@ package com.bio.handler;
 
 import com.bio.Bio;
 import com.bio.HttpResponse;
-import com.bio.database.FeedDatabase;
 import com.bio.database.SolutionDatabase;
 import com.bio.database.SolutionMaterialDatabase;
 import com.bio.database.SolutionReactiveDatabase;
 import com.bio.entity.Solution;
 import com.bio.entity.SolutionMaterial;
 import com.bio.entity.SolutionReactive;
+import com.bio.service.EntityNotFoundException;
+import com.bio.service.SolutionService;
 import com.bio.value.SolutionValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -68,8 +69,8 @@ public class SolutionHandler extends HandlerCRUD {
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {
         Connection connection = Bio.database.getConnection();
         try (Statement statement = connection.createStatement();
-             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.selectByFeed);
-             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.selectByFeed)) {
+             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.selectBySolution);
+             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.selectBySolution)) {
             ArrayList<Solution> solutions = new ArrayList<>();
             ResultSet rs = statement.executeQuery(SolutionDatabase.select);
             while (rs.next()) {
@@ -102,47 +103,21 @@ public class SolutionHandler extends HandlerCRUD {
     }
 
     public HttpResponse readById(HttpExchange exchange, Long id) throws SQLException {
-        Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(SolutionDatabase.selectById);
-             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.selectByFeed);
-             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.selectByFeed)) {
-            FeedDatabase.prepareSelectById(statement, id);
-            ResultSet rs = statement.executeQuery();
-            if (!rs.next()) {
-                String message = String.format("Раствор %d не найден.", id);
-                log.info(message);
-                return new HttpResponse(200, message);
-            }
-            Solution solution = SolutionDatabase.get(rs);
-            // reactives
-            SolutionReactiveDatabase.prepareSelectBySolution(statementReactive, id);
-            ResultSet rsReactive = statementReactive.executeQuery();
-            ArrayList<SolutionReactive> solutionReactives = new ArrayList<>();
-            while (rsReactive.next()) {
-                solutionReactives.add(SolutionReactiveDatabase.get(rsReactive));
-            }
-            if (solutionReactives.size() > 0) {
-                solution.setReactives(solutionReactives);
-            }
-            // materials
-            SolutionMaterialDatabase.prepareSelectBySolution(statementMaterial, id);
-            ResultSet rsMaterial = statementMaterial.executeQuery();
-            ArrayList<SolutionMaterial> solutionMaterials = new ArrayList<>();
-            while (rsMaterial.next()) {
-                solutionMaterials.add(SolutionMaterialDatabase.get(rsMaterial));
-            }
-            if (solutionMaterials.size() > 0) {
-                solution.setMaterials(solutionMaterials);
-            }
+        try {
+            Solution solution = SolutionService.getById(id);
             return new HttpResponse(200, solution);
+        } catch (EntityNotFoundException e) {
+            String message = e.getMessage();
+            log.info(message);
+            return new HttpResponse(200, message);
         }
     }
 
     public HttpResponse deleteById(HttpExchange exchange, Long id) throws SQLException {
         Connection connection = Bio.database.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(SolutionDatabase.deleteById);
-             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.deleteByFeed);
-             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.deleteByFeed)) {
+             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.deleteBySolution);
+             PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.deleteBySolution)) {
             SolutionDatabase.prepareDeleteById(statement, id);
             String message;
             if (statement.executeUpdate() > 0) {

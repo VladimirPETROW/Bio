@@ -71,6 +71,12 @@ public class MaterialHandler extends HandlerCRUD {
         }
     }
 
+    /*
+    public HttpResponse updateById(HttpExchange exchange, Long id) throws IOException, SQLException {
+        return null;
+    }
+    */
+
     public HttpResponse deleteById(HttpExchange exchange, Long id) throws SQLException {
         Connection connection = Bio.database.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(MaterialDatabase.deleteById)) {
