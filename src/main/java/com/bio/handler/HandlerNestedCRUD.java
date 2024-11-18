@@ -4,15 +4,16 @@ import com.bio.HttpMethod;
 import com.bio.HttpResponse;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@Log
 public abstract class HandlerNestedCRUD {
+
+    private static Logger log = Logger.getLogger(HandlerNestedCRUD.class.getName());
 
     public void handleNestedCRUD(HttpExchange exchange, Function<HttpResponse, HttpResponse> formatter) throws IOException {
         HttpResponse response;
@@ -50,7 +51,7 @@ public abstract class HandlerNestedCRUD {
                 response = worker.process(exchange);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "", e);
-                response = HttpResponse.createResponse(400);
+                response = new HttpResponse(500, e.getMessage());
             }
         }
         response = formatter.apply(response);

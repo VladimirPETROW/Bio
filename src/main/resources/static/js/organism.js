@@ -25,13 +25,21 @@ $(document).ready(function() {
 
         refresh: function() {
             var html = "";
-            for (var i = 0; i < this.data.length; i++) {
-                organism = this.data[i];
-                html += "<tr data-organism-id='" + organism.id + "' class='item' onclick='javascript:$.organism.select(this.getAttribute(\"data-organism-id\"));'>" +
-                            "<th class='table-light'>" + organism.id + "</th>" +
-                            "<td>" + organism.name + "</td>" +
-                            "<td>" + organism.doubling + "</td>" +
-                        "</tr>";
+            if (this.data.length > 0) {
+                for (var i = 0; i < this.data.length; i++) {
+                    organism = this.data[i];
+                    html += "<tr data-organism-id='" + organism.id + "' class='item' onclick='javascript:$.organism.select(this.getAttribute(\"data-organism-id\"));'>" +
+                                "<th class='table-light'>" + organism.id + "</th>" +
+                                "<td>" + organism.name + "</td>" +
+                                "<td>" + organism.doubling + "</td>" +
+                            "</tr>";
+                }
+                $(".organism-table").removeClass("d-none");
+                $(".organism-empty").addClass("d-none");
+            }
+            else {
+                $(".organism-empty").removeClass("d-none");
+                $(".organism-table").addClass("d-none");
             }
             $(".organism-tbody").html(html);
             $(".organism").removeClass("d-none");

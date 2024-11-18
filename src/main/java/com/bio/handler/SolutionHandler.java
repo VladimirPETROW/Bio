@@ -13,16 +13,17 @@ import com.bio.service.SolutionService;
 import com.bio.value.SolutionValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
-@Log
 public class SolutionHandler extends HandlerCRUD {
+
+    private static Logger log = Logger.getLogger(SolutionHandler.class.getName());
 
     public HttpResponse create(HttpExchange exchange) throws IOException, SQLException {
         InputStream input = exchange.getRequestBody();
@@ -38,13 +39,10 @@ public class SolutionHandler extends HandlerCRUD {
             return new HttpResponse(400, error.toString());
         }
         Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(SolutionDatabase.insert);
-             PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.insert);
+        try (PreparedStatement statementReactive = connection.prepareStatement(SolutionReactiveDatabase.insert);
              PreparedStatement statementMaterial = connection.prepareStatement(SolutionMaterialDatabase.insert)) {
-            SolutionDatabase.prepareInsert(statement, solutionValue);
-            ResultSet rs = statement.executeQuery();
-            rs.next();
-            Long id = rs.getLong(1);
+            Solution solution = SolutionDatabase.insert(connection, solutionValue);
+            long id = solution.getId();
             List<SolutionReactive> solutionReactives = solutionValue.getReactives();
             if (solutionReactives != null) {
                 for (SolutionReactive solutionReactive : solutionReactives) {

@@ -7,15 +7,16 @@ import com.bio.entity.Reactive;
 import com.bio.value.ReactiveValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-@Log
 public class ReactiveHandler extends HandlerCRUD {
+
+    private static Logger log = Logger.getLogger(ReactiveHandler.class.getName());
 
     public HttpResponse create(HttpExchange exchange) throws IOException, SQLException {
         InputStream input = exchange.getRequestBody();
@@ -39,17 +40,11 @@ public class ReactiveHandler extends HandlerCRUD {
             return new HttpResponse(400, error.toString());
         }
         Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(ReactiveDatabase.insert)) {
-            ReactiveDatabase.prepareInsert(statement, reactiveValue);
-            ResultSet rs = statement.executeQuery();
-            rs.next();
-            //Long id = rs.getLong(1);
-            Reactive reactive = ReactiveDatabase.get(rs);
-            connection.commit();
-            String message = String.format("Реактив %d добавлен.", reactive.getId());
-            log.info(message);
-            return new HttpResponse(200, reactive);
-        }
+        Reactive reactive = ReactiveDatabase.insert(connection, reactiveValue);
+        connection.commit();
+        String message = String.format("Реактив %d добавлен.", reactive.getId());
+        log.info(message);
+        return new HttpResponse(200, reactive);
     }
 
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {

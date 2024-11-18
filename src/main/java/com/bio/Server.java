@@ -10,16 +10,20 @@ import java.util.function.Function;
 
 public class Server {
 
+    String host;
+    int port;
     HttpServer httpServer;
     Handler handler;
 
     HashMap<String, HashMap<HttpMethod, Handlers>> contexts;
 
+    public static int defaultServerPort = 80;
+
     public Server() {
         try {
-            String host = Bio.properties.getProperty("server.host", "localhost");
+            host = Bio.properties.getProperty("server.host", "localhost");
             String portProperty = Bio.properties.getProperty("server.port");
-            int port = (portProperty != null) ? Integer.parseInt(portProperty) : 80;
+            port = (portProperty != null) ? Integer.parseInt(portProperty) : defaultServerPort;
             httpServer = HttpServer.create(new InetSocketAddress(host, port), 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -33,10 +37,11 @@ public class Server {
         addContextView("/organism/", HttpMethod.GET, "organism", HttpResponse::asText);
         addContextView("/reactive/", HttpMethod.GET, "reactive", HttpResponse::asText);
         addContextView("/material/", HttpMethod.GET, "material", HttpResponse::asText);
-        //addContextView("/feed/", HttpMethod.GET, "feed", HttpResponse::asText);
         addContextViewItem("/feed/", HttpMethod.GET, "feed", HttpResponse::asText);
         addContextView("/history/", HttpMethod.GET, "history", HttpResponse::asText);
-        addContextView("/experiment/", HttpMethod.GET, "experiment", HttpResponse::asText);
+        addContextViewItem("/experiment/", HttpMethod.GET, "experiment", HttpResponse::asText);
+        addContext("/api/program/", HttpMethod.GET, handler::program, HttpResponse::asJson);
+        addContext("/api/program/stop", HttpMethod.POST, handler::stop, HttpResponse::asJson);
         addContextCRUD("/api/organism/", new OrganismHandler(), HttpResponse::asJson);
         addContextCRUD("/api/reactive/", new ReactiveHandler(), HttpResponse::asJson);
         addContextCRUD("/api/material/", new MaterialHandler(), HttpResponse::asJson);
@@ -70,4 +75,7 @@ public class Server {
         httpServer.start();
     }
 
+    void stop() {
+        httpServer.stop(0);
+    }
 }

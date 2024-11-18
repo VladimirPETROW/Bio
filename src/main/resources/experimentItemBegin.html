@@ -3,38 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Микроорганизмы</title>
+    <title>Эксперименты</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
-    <link href="/css/organism.css" rel="stylesheet">
 </head>
 <body>
-    <div class="modal" id="createOrganism_view" tabindex="-1">
-        <div class="modal-dialog modal-fullscreen-xl-down modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">Создание микроорганизма</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="row g-3">
-                        <div class="col-sm-6">
-                            <label for="createOrganism_name" class="form-label">Название штамма</label>
-                            <input id="createOrganism_name" name="name" type="text" class="form-control" data-valid-type="text">
-                        </div>
-                        <div class="col-sm-6">
-                            <label for="createOrganism_doubling" class="form-label">Скорость удвоения, ч</label>
-                            <input id="createOrganism_doubling" name="doubling" type="text" class="form-control" data-valid-type="number">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-outline-primary" id="createOrganism_create">Создать</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="programAbout_view" tabindex="-1">
         <div class="modal-dialog modal-fullscreen-md-down modal-md">
             <div class="modal-content">
@@ -82,8 +55,8 @@
         <div class="row flex-shrink-1 m-0">
             <div class="col p-0">
                 <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a href="/organism/" class="nav-link active">Микроорганизмы</a>
+                    <li class="nav-item d-none d-sm-block">
+                        <a href="/organism/" class="nav-link">Микроорганизмы</a>
                     </li>
                     <li class="nav-item d-none d-md-block">
                         <a href="/reactive/" class="nav-link">Реактивы</a>
@@ -97,8 +70,8 @@
                     <li class="nav-item d-none d-lg-block">
                         <a href="/history/" class="nav-link">История</a>
                     </li>
-                    <li class="nav-item d-none d-sm-block">
-                        <a href="/experiment/" class="nav-link">Эксперименты</a>
+                    <li class="nav-item">
+                        <a href="/experiment/" class="nav-link active">Эксперименты</a>
                     </li>
                 </ul>
             </div>
@@ -109,6 +82,9 @@
                     </svg>
                 </button>
                 <ul class="dropdown-menu">
+                    <li class="dropdown-item d-sm-none">
+                        <a href="/organism/" class="nav-link">Микроорганизмы</a>
+                    </li>
                     <li class="dropdown-item d-md-none">
                         <a href="/reactive/" class="nav-link">Реактивы</a>
                     </li>
@@ -121,50 +97,81 @@
                     <li class="dropdown-item d-lg-none">
                         <a href="/history/" class="nav-link">История</a>
                     </li>
-                    <li class="dropdown-item d-sm-none">
-                        <a href="/experiment/" class="nav-link">Эксперименты</a>
-                    </li>
                 </ul>
             </div>
         </div>
         <div class="row flex-shrink-1 m-0 p-2">
             &nbsp;
         </div>
-        <div class="row flex-grow-1 overflow-hidden m-0 p-1 organism d-none">
-            <div class="col h-100 p-0">
-                <div class="d-flex flex-column h-100 p-0">
-                    <div class="row flex-grow-1 m-0 overflow-hidden">
-                        <div class="table-sticky overflow-auto h-100 p-0 border">
-                            <table class="table table-hover table-bordered organism-table m-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="w-min">№</th>
-                                        <th>Штамм</th>
-                                        <th>Скорость удвоения, ч</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="organism-tbody">
-                                </tbody>
-                            </table>
-                            <div class="organism-empty h-100 d-flex align-items-center justify-content-center">
-                                <div class="text-secondary text-opacity-50">Нет микроорганизмов</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row flex-grow-1 ms-0 me-0 mt-2 mb-0 organism-selected d-none">
-                        <div class="col fw-bold border bg-light d-table h-100">
-                            <div class="organism-selected-info d-table-cell align-middle text-center p-2 text-break"></div>
-                        </div>
-                    </div>
-                    <div class="row flex-schrink-1 m-0 pt-2 pb-1">
-                        <div class="col p-0">
-                            <div class="row justify-content-between g-2">
-                                <div class="col-sm-auto">
-                                    <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#createOrganism_view">Новый микроорганизм</button>
+        <div class="row flex-grow-1 overflow-hidden m-0 p-1 experimentItem d-none">
+            <div class="col p-0 h-100">
+                <div class="h-100 w-100 pb-1 overflow-hidden">
+                    <div class="px-lg-4 pb-lg-4 h-100 overflow-auto bg-light">
+                        <div class="row bg-body border shadow m-0 g-4 px-4 pt-3 pb-5">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12 fw-bold">Питательная среда</div>
+                                    <div id="feed" class="col border m-2 p-2 property-value"></div>
                                 </div>
-                                <div class="col-sm-auto organism-selected d-none text-end">
-                                    <!--button type="button" class="btn btn-outline-primary organism-unselect">Отмена</button-->
-                                    <button id="toExperiment" type="button" class="btn btn-outline-primary w-100">В эксперимент</button>
+                            </div>
+                            <div class="col-12">
+                                <div class="row g-4 justify-content-start">
+                                    <div class="col-sm-auto">
+                                        <div class="row fw-bold">
+                                            <div class="col">Дата и время начала ферментации</div>
+                                        </div>
+                                        <div class="row">
+                                            <div id="fermentBegin" class="col border m-2 p-2 property-value"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <div class="row fw-bold">
+                                            <div class="col">Дата и время окончания ферментации</div>
+                                        </div>
+                                        <div class="row">
+                                            <div id="fermentEnd" class="col border m-2 p-2 property-value"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row g-4">
+                                    <div class="col-sm-auto">
+                                        <div class="row fw-bold">
+                                            <div class="col">Количество оборотов мешалки</div>
+                                        </div>
+                                        <div class="row">
+                                            <div id="speed" class="col border m-2 p-2 property-value"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <div class="row fw-bold">
+                                            <div class="col">Поддерживаемая температура</div>
+                                        </div>
+                                        <div class="row">
+                                            <div id="temperature" class="col border m-2 p-2 property-value"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <div class="row fw-bold">
+                                            <div class="col">Поддерживаемый Ph</div>
+                                        </div>
+                                        <div class="row">
+                                            <div id="ph" class="col border m-2 p-2 property-value"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12 fw-bold">КОЕ/г</div>
+                                    <div id="koe" class="col col-sm-3 col-lg-2 col-xl-1 border m-2 p-2 property-value"></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12 fw-bold">Комментарий</div>
+                                    <div id="comment" class="col border m-2 p-2 text-break property-value"></div>
                                 </div>
                             </div>
                         </div>
@@ -176,6 +183,5 @@
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/jquery-3.7.1.min.js"></script>
     <script src="/js/main.js"></script>
-    <script src="/js/organism.js"></script>
-</body>
-</html>
+    <!--script src="/js/experiment.js"></script-->
+    <script src="/js/experimentItem.js"></script>

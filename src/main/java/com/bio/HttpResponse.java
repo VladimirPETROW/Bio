@@ -4,17 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.Headers;
-import lombok.extern.java.Log;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@Log
 public class HttpResponse {
     public int code;
     public Object message;
     HashMap<String, String> headers;
+
+    private static Logger log = Logger.getLogger(HttpResponse.class.getName());
 
     public HttpResponse(int c, Object m) {
         code = c;
@@ -38,8 +39,14 @@ public class HttpResponse {
             case 400:
                 message = "Bad Request";
                 break;
+            case 404:
+                message = "Not Found";
+                break;
             case 405:
                 message = "Method Not Allowed";
+                break;
+            case 500:
+                message = "Internal Server Error";
                 break;
         }
         return new HttpResponse(code, message);

@@ -56,6 +56,12 @@ $(document).ready(function() {
                                 "<td>" + solutionReactive.unit + "</td>" +
                             "</tr>";
                 }
+                $(".solution-table").removeClass("d-none");
+                $(".solution-empty").addClass("d-none");
+            }
+            else {
+                $(".solution-empty").removeClass("d-none");
+                $(".solution-table").addClass("d-none");
             }
             $(".solution-tbody").html(html);
             $(".solution").removeClass("d-none");
@@ -99,6 +105,105 @@ $(document).ready(function() {
         $.solution.reload();
     });
 
+    $("#selectReactiveMaterial_reactive_toSolution").on("click", () => {
+        $.ajax({
+            method: "GET",
+            url: "/api/solutionReactive/" + $.solution.data.id + "/" + $.reactiveSelected.data.id,
+            async: false
+        }).done(function(result) {
+            $.solutionReactive.data = result;
+            var modal = bootstrap.Modal.getInstance("#toinSolutionReactive_view");
+            if (!modal) {
+                modal = new bootstrap.Modal("#toinSolutionReactive_view");
+            }
+            modal.show();
+        }).fail(function(result) {
+            if (result.status == 404) {
+                var modal = bootstrap.Modal.getInstance("#toSolutionReactive_view");
+                if (!modal) {
+                    modal = new bootstrap.Modal("#toSolutionReactive_view");
+                }
+                modal.show();
+            }
+            else {
+
+            }
+        });
+    });
+
+    $("#toSolutionReactive_view").on("show.bs.modal", () => {
+        $("#toSolutionReactive_view form :input").val('');
+        $("#toSolutionReactive_name").text($.reactiveSelected.data.name);
+        $("#toSolutionReactive_unit").val($.reactiveSelected.data.unit);
+        $.validator.valid($("#toSolutionReactive_view form"));
+    });
+    $("#toSolutionReactive_view").on("shown.bs.modal", () => {
+        $("#toSolutionReactive_count").trigger('focus');
+    });
+    $("#toSolutionReactive_add").on("click", () => {
+        var inputs = $("#toSolutionReactive_view form input");
+        var value = {"reactive": {"id": $.reactiveSelected.data.id}};
+        for (var i = 0; i < inputs.length; i++) {
+            var input = inputs[i];
+            if (input.value) {
+                value[input.name] = input.value.trim();
+            }
+        }
+        if ($.validator.validate($("#toSolutionReactive_view form"))) {
+            $.ajax({
+                method: "POST",
+                url: "/api/solutionReactive/" + $.solution.data.id,
+                data: JSON.stringify(value),
+                contentType: "application/json",
+                async: false
+            }).done(function(result) {
+                bootstrap.Modal.getInstance("#toSolutionReactive_view").hide();
+            }).fail(function(result) {
+                var response = result.responseJSON;
+                alert(response.message);
+                //$(".info").html(html);
+            });
+        }
+    });
+
+    $("#toinSolutionReactive_view").on("show.bs.modal", () => {
+        $("#toinSolutionReactive_view form :input").val('');
+        $("#toinSolutionReactive_name").text($.solutionReactive.data.reactive.name);
+        $("#toinSolutionReactive_count").val($.solutionReactive.data.count);
+        $("#toinSolutionReactive_unit").val($.solutionReactive.data.unit);
+        $.validator.valid($("#toinSolutionReactive_view form"));
+    });
+    $("#toinSolutionReactive_view").on("shown.bs.modal", () => {
+        $("#toinSolutionReactive_count").trigger('focus');
+    });
+    $("#toinSolutionReactive_save").on("click", () => {
+        var inputs = $("#toinSolutionReactive_view form input");
+        var value = {};
+        for (var i = 0; i < inputs.length; i++) {
+            var input = inputs[i];
+            if (input.value) {
+                value[input.name] = input.value.trim();
+            }
+        }
+        if ($.validator.validate($("#toinSolutionReactive_view form"))) {
+            $.ajax({
+                method: "PUT",
+                url: "/api/solutionReactive/" + $.solution.data.id + "/" + $.solutionReactive.data.reactive.id,
+                data: JSON.stringify(value),
+                contentType: "application/json",
+                async: false
+            }).done(function(result) {
+                $(".solution").addClass("d-none");
+                $.solution.reload();
+                bootstrap.Modal.getInstance("#toinSolutionReactive_view").hide();
+            }).fail(function(result) {
+                var response = result.responseJSON;
+                alert(response.message);
+                //$(".info").html(html);
+            });
+        }
+    });
+
     $("#inSolutionReactive_view").on("show.bs.modal", () => {
         $("#inSolutionReactive_view form :input").val('');
         $("#inSolutionReactive_name").text($.solutionReactive.data.reactive.name);
@@ -109,7 +214,7 @@ $(document).ready(function() {
     $("#inSolutionReactive_view").on("shown.bs.modal", () => {
         $("#inSolutionReactive_count").trigger('focus');
     });
-    $("#inSolutionReactive_add").on("click", () => {
+    $("#inSolutionReactive_save").on("click", () => {
         var inputs = $("#inSolutionReactive_view form input");
         var value = {};
         for (var i = 0; i < inputs.length; i++) {

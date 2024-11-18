@@ -1,4 +1,51 @@
+
 $(document).ready(function() {
+
+    $.program = {
+        data: null,
+
+        load: function() {
+            $.ajax({
+                method: "GET",
+                url: "/api/program/",
+                async: false
+            }).done(function(program) {
+                $.program.data = program;
+                $.program.refresh();
+            }).fail(function(result) {
+
+            });
+        },
+
+        refresh: function() {
+            $(".version").text($.program.data.version);
+            if ($.program.data.portable) {
+                $(".portable").removeClass("invisible");
+            }
+        }
+    };
+
+    $.program.load();
+
+    $("#stopProgram_stop").on("click", () => {
+        bootstrap.Modal.getInstance("#stopProgram_view").hide();
+        var html = "<div class='h-100 d-flex align-items-center justify-content-center text-secondary bg-light'>Закройте это окно.</div>";
+        $("body").html(html);
+        document.title = "Закройте это окно";
+        $.ajax({
+            method: "POST",
+            url: "/api/program/stop",
+            //async: false
+        }).done(function(result) {
+            //bootstrap.Modal.getInstance("#stopProgram_view").hide();
+        }).fail(function(result) {
+            /*
+            var response = result.responseJSON;
+            alert(response.message);
+            */
+            //$(".info").html(html);
+        });
+    });
 
     /* validator */
 
@@ -16,7 +63,24 @@ $(document).ready(function() {
             number: function(value) {
                 var regex = new RegExp("^(\\s*\\d+([\\.,]\\d+)?\\s*)+$", "i");
                 return regex.test(value);
-            }/*,
+            },
+            datetime: function(value) {
+                var regex = new RegExp("^\\s*(\\d?\\d)\\.(\\d\\d)\\.(\\d\\d\\d\\d)\\s*([01]?\\d|2[0-3]):([0-5]\\d)\\s*$", "i");
+                var match = regex.exec(value);
+                //if (!regex.test(value)) return false;
+                if (!match) return false;
+                if (match[1].length < 2) {
+                    match[1] = "0" + match[1];
+                }
+                if (match[4].length < 2) {
+                    match[4] = "0" + match[4];
+                }
+                //var valueDate = value.replace(regex, "$3-$2-$1T$4:$5");
+                var valueDate = match[3] + "-" + match[2] + "-" + match[1] + "T" + match[4] + ":" + match[5];
+                var date = Date.parse(valueDate);
+                return !isNaN(date);
+            }
+            /*,
             word: function(value) {
                 var regex = new RegExp("^(\\s*[A-Za-zА-ЯЁа-яё]+\\s*)+$", "i");
                 return regex.test(value);
@@ -27,7 +91,8 @@ $(document).ready(function() {
                 var valueDate = value.replace(regex, "$3-$2-$1");
                 var date = Date.parse(valueDate);
                 return !isNaN(date);
-            }*/
+            }
+            */
         },
 
         validate: function(doc) {

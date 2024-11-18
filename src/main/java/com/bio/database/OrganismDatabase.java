@@ -8,15 +8,37 @@ import java.sql.*;
 public class OrganismDatabase {
 
     public static String createTable = "CREATE TABLE IF NOT EXISTS organism (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name TEXT, kind TEXT, doubling NUMERIC(6, 2))";
-    public static String setIdSeq = "SELECT setval('organism_id_seq', (SELECT max(id) FROM organism))";
-    public static String insert = "INSERT INTO organism (name, kind, doubling) VALUES (?, ?, ?) RETURNING id, name, kind, doubling";
+    public static String[] setIdSeq = {"ALTER TABLE organism ALTER COLUMN id RESTART WITH ", "SELECT max(id) FROM organism"};
+    public static String insert = "INSERT INTO organism (name, kind, doubling) VALUES (?, ?, ?)";
     public static String select = "SELECT id, name, kind, doubling FROM organism ORDER BY id";
     public static String selectById = "SELECT id, name, kind, doubling FROM organism WHERE id = ?";
     public static String deleteById = "DELETE FROM organism WHERE id = ?";
 
+    public static long standardId = 1000;
+
     public static void init(Statement statement) throws SQLException {
         statement.execute(createTable);
-        statement.execute(setIdSeq);
+        // id
+        ResultSet rs = statement.executeQuery(setIdSeq[1]);
+        rs.next();
+        long max = rs.getLong(1);
+        max = Math.max(max, standardId);
+        statement.execute(setIdSeq[0] + (max + 1));
+    }
+
+    public static Organism insert(Connection connection, OrganismValue organismValue) throws SQLException {
+        try (PreparedStatement stmtInsert = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement stmtSelect = connection.prepareStatement(selectById)) {
+            prepareInsert(stmtInsert, organismValue);
+            stmtInsert.executeUpdate();
+            ResultSet rs = stmtInsert.getGeneratedKeys();
+            rs.next();
+            Long id = rs.getLong(1);
+            prepareSelectById(stmtSelect, id);
+            rs = stmtSelect.executeQuery();
+            rs.next();
+            return get(rs);
+        }
     }
 
     public static void prepareInsert(PreparedStatement statement, OrganismValue organismValue) throws SQLException {

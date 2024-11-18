@@ -22,13 +22,18 @@ html, body {
     left: 0px;
     top: 0px;
 }
-.table-sticky table thead th:first-child {
+.table-sticky:not(.table-sticky-column) table thead th:first-child {
     position: sticky;
     left: 0px;
     top: 0px;
     z-index: 2;
 }
-.table-sticky table thead th:not(:first-child) {
+.table-sticky:not(.table-sticky-column) table thead th:not(:first-child) {
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+}
+.table-sticky.table-sticky-column table thead th {
     position: sticky;
     top: 0px;
     z-index: 1;
@@ -36,8 +41,8 @@ html, body {
 .table-sticky table tbody {
     z-index: 0;
 }
-.table-sticky table tbody th:first-child,
-.table-sticky table tbody td:first-child {
+.table-sticky:not(.table-sticky-column) table tbody th:first-child,
+.table-sticky:not(.table-sticky-column) table tbody td:first-child {
     position: sticky;
     left: 0px;
 }
@@ -63,6 +68,16 @@ html, body {
 .table-sticky table th:not(:first-child),
 .table-sticky table td:not(:first-child) {
     border-left: 0px;
+}
+
+/* properties */
+
+.property-value {
+    background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity));
+    /*cursor: pointer;*/
+}
+.property-value:empty::before {
+    content: "\200b";
 }
 
 /* validator */

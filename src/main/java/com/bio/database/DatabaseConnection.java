@@ -11,6 +11,8 @@ public class DatabaseConnection {
 
     Connection connection;
 
+    boolean corrupted;
+
     public DatabaseConnection(String url, Properties connProps, boolean autoCommit) throws SQLException {
         this.url = url;
         this.connProps = connProps;
@@ -21,6 +23,9 @@ public class DatabaseConnection {
     }
 
     public Connection getConnection() throws SQLException {
+        if (corrupted) {
+            throw new RuntimeException("Database corrupted.");
+        }
         try {
             connection.rollback();
         }
@@ -34,5 +39,9 @@ public class DatabaseConnection {
 
     public void close() throws SQLException {
         connection.close();
+    }
+
+    public void setCorrupted(boolean corrupted) {
+        this.corrupted = corrupted;
     }
 }

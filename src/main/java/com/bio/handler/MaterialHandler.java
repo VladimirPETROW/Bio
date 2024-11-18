@@ -7,15 +7,16 @@ import com.bio.entity.Material;
 import com.bio.value.MaterialValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-@Log
 public class MaterialHandler extends HandlerCRUD {
+
+    private static Logger log = Logger.getLogger(MaterialHandler.class.getName());
 
     public HttpResponse create(HttpExchange exchange) throws IOException, SQLException {
         InputStream input = exchange.getRequestBody();
@@ -31,16 +32,11 @@ public class MaterialHandler extends HandlerCRUD {
             return new HttpResponse(400, error.toString());
         }
         Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(MaterialDatabase.insert)) {
-            MaterialDatabase.prepareInsert(statement, materialValue);
-            ResultSet rs = statement.executeQuery();
-            rs.next();
-            Long id = rs.getLong(1);
-            connection.commit();
-            String message = String.format("Сырье %d добавлено.", id);
-            log.info(message);
-            return new HttpResponse(200, message);
-        }
+        Material material = MaterialDatabase.insert(connection, materialValue);
+        connection.commit();
+        String message = String.format("Сырье %d добавлено.", material.getId());
+        log.info(message);
+        return new HttpResponse(200, material);
     }
 
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {

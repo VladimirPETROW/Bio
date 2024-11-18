@@ -27,13 +27,22 @@ $(document).ready(function() {
 
         refresh: function() {
             var html = "";
-            for (var i = 0; i < this.data.length; i++) {
-                reactive = this.data[i];
-                html += "<tr data-reactive-id='" + reactive.id + "' class='item' onclick='javascript:$.reactive.select(this.getAttribute(\"data-reactive-id\"));'>" +
-                            "<th class='table-light'>" + reactive.id + "</th>" +
-                            "<td>" + reactive.name + "</td>" +
-                            "<td>" + (reactive.unit ? reactive.unit : "") + "</td>" +
-                        "</tr>";
+            if (this.data.length > 0) {
+                for (var i = 0; i < this.data.length; i++) {
+                    reactive = this.data[i];
+                    html += "<tr data-reactive-id='" + reactive.id + "' class='item' onclick='javascript:$.reactive.select(this.getAttribute(\"data-reactive-id\"));'>" +
+                                "<th class='table-light'>" + reactive.id + "</th>" +
+                                "<td>" + reactive.name + "</td>" +
+                                "<td>" + (reactive.kind ? reactive.kind : "") + "</td>" +
+                                "<td>" + (reactive.unit ? reactive.unit : "") + "</td>" +
+                            "</tr>";
+                }
+                $(".reactive-table").removeClass("d-none");
+                $(".reactive-empty").addClass("d-none");
+            }
+            else {
+                $(".reactive-empty").removeClass("d-none");
+                $(".reactive-table").addClass("d-none");
             }
             $(".reactive-tbody").html(html);
             $(".reactive").removeClass("d-none");
@@ -93,41 +102,6 @@ $(document).ready(function() {
                 $.reactive.select(reactive.id);
                 $.reactive.load();
                 bootstrap.Modal.getInstance("#createReactive_view").hide();
-            }).fail(function(result) {
-                var response = result.responseJSON;
-                alert(response.message);
-                //$(".info").html(html);
-            });
-        }
-    });
-
-    $("#toSolutionReactive_view").on("show.bs.modal", () => {
-        $("#toSolutionReactive_view form :input").val('');
-        $("#toSolutionReactive_name").text($.reactiveSelected.data.name);
-        $("#toSolutionReactive_unit").val($.reactiveSelected.data.unit);
-        $.validator.valid($("#toSolutionReactive_view form"));
-    });
-    $("#toSolutionReactive_view").on("shown.bs.modal", () => {
-        $("#toSolutionReactive_count").trigger('focus');
-    });
-    $("#toSolutionReactive_add").on("click", () => {
-        var inputs = $("#toSolutionReactive_view form input");
-        var value = {"reactive": {"id": $.reactiveSelected.data.id}};
-        for (var i = 0; i < inputs.length; i++) {
-            var input = inputs[i];
-            if (input.value) {
-                value[input.name] = input.value.trim();
-            }
-        }
-        if ($.validator.validate($("#toSolutionReactive_view form"))) {
-            $.ajax({
-                method: "POST",
-                url: "/api/solutionReactive/" + $.solution.data.id,
-                data: JSON.stringify(value),
-                contentType: "application/json",
-                async: false
-            }).done(function(result) {
-                bootstrap.Modal.getInstance("#toSolutionReactive_view").hide();
             }).fail(function(result) {
                 var response = result.responseJSON;
                 alert(response.message);

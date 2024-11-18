@@ -4,10 +4,13 @@ import com.bio.Bio;
 import com.bio.HttpResponse;
 import com.bio.database.ExperimentDatabase;
 import com.bio.entity.Experiment;
+import com.bio.entity.Feed;
+import com.bio.service.EntityNotFoundException;
+import com.bio.service.FeedService;
 import com.bio.value.ExperimentValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,20 +20,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-@Log
 public class ExperimentHandler extends HandlerCRUD {
+
+    private static Logger log = Logger.getLogger(ExperimentHandler.class.getName());
 
     public HttpResponse create(HttpExchange exchange) throws IOException, SQLException {
         InputStream input = exchange.getRequestBody();
         String request = Handlers.readBytes(input).toString();
         ObjectMapper mapper = new ObjectMapper();
-        //mapper.registerModule(new JavaTimeModule());
+        mapper.registerModule(new JavaTimeModule());
         ExperimentValue experimentValue = mapper.readValue(request, ExperimentValue.class);
         StringBuffer error = new StringBuffer();
+        /*
         if (experimentValue.getOrganism() == null) {
             error.append("Не указан организм.");
         }
+        */
         if (experimentValue.getFeed() == null) {
             if (error.length() > 0) {
                 error.append(" ");
@@ -41,16 +48,11 @@ public class ExperimentHandler extends HandlerCRUD {
             return new HttpResponse(400, error.toString());
         }
         Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(ExperimentDatabase.insert)) {
-            ExperimentDatabase.prepareInsert(statement, experimentValue);
-            ResultSet rs = statement.executeQuery();
-            rs.next();
-            Long id = rs.getLong(1);
-            connection.commit();
-            String message = String.format("Эксперимент %d добавлен.", id);
-            log.info(message);
-            return new HttpResponse(200, message);
-        }
+        Experiment experiment = ExperimentDatabase.insert(connection, experimentValue);
+        connection.commit();
+        String message = String.format("Эксперимент %d добавлен.", experiment.getId());
+        log.info(message);
+        return new HttpResponse(200, experiment);
     }
 
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {
@@ -60,6 +62,17 @@ public class ExperimentHandler extends HandlerCRUD {
             ResultSet rs = statement.executeQuery(ExperimentDatabase.select);
             while (rs.next()) {
                 Experiment experiment = ExperimentDatabase.get(rs);
+                // feed
+                try {
+                    Long feedId = experiment.getFeed().getId();
+                    Feed feed = FeedService.getById(feedId);
+                    experiment.setFeed(feed);
+                }
+                catch (EntityNotFoundException e) {
+                    String message = e.getMessage();
+                    log.info(message);
+                    return new HttpResponse(404, message);
+                }
                 experiments.add(experiment);
             }
             return new HttpResponse(200, experiments.toArray());
@@ -77,6 +90,17 @@ public class ExperimentHandler extends HandlerCRUD {
                 return new HttpResponse(200, message);
             }
             Experiment experiment = ExperimentDatabase.get(rs);
+            // feed
+            try {
+                Long feedId = experiment.getFeed().getId();
+                Feed feed = FeedService.getById(feedId);
+                experiment.setFeed(feed);
+            }
+            catch (EntityNotFoundException e) {
+                String message = e.getMessage();
+                log.info(message);
+                return new HttpResponse(404, message);
+            }
             return new HttpResponse(200, experiment);
         }
     }

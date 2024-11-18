@@ -5,7 +5,6 @@ import com.bio.HttpMethod;
 import com.bio.HttpResponse;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,9 +13,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@Log
 public class Handler {
+
+    private static Logger log = Logger.getLogger(Handler.class.getName());
 
     public void handleMethod(HttpMethod method, Worker worker, HttpExchange exchange, Function<HttpResponse, HttpResponse> formatter) throws IOException {
         HttpResponse response;
@@ -177,6 +178,40 @@ public class Handler {
         }
         String text = Handlers.readBytes(resource).toString();
         return new HttpResponse(200, text);
+    }
+
+    public HttpResponse program(HttpExchange exchange) {
+        String start = exchange.getHttpContext().getPath();
+        String request = exchange.getRequestURI().getPath();
+        if (!request.startsWith(start)) {
+            String message = "Неверный путь.";
+            log.severe(message);
+            return new HttpResponse(500, message);
+        }
+        String last = request.substring(start.length());
+        InputStream resource;
+        String resourcesWhere = Bio.properties.getProperty("server.resources");
+        if (last.isEmpty()) {
+            return new HttpResponse(200, Bio.program);
+        }
+        else {
+            return HttpResponse.createResponse(400);
+        }
+    }
+
+    public HttpResponse stop(HttpExchange exchange) {
+        try {
+            Bio.stopServer();
+        } catch (Throwable e) {
+            //throw new RuntimeException(e);
+        }
+        try {
+            Bio.database.close();
+        } catch (Throwable e) {
+            //throw new RuntimeException(e);
+        }
+        System.exit(0);
+        return null;
     }
 
 }

@@ -15,16 +15,17 @@ import com.bio.value.FeedValue;
 import com.bio.value.SolutionValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
-@Log
 public class FeedHandler extends HandlerCRUD {
+
+    private static Logger log = Logger.getLogger(FeedHandler.class.getName());
 
     public HttpResponse create(HttpExchange exchange) throws IOException, SQLException {
         InputStream input = exchange.getRequestBody();
@@ -57,38 +58,29 @@ public class FeedHandler extends HandlerCRUD {
             }
         }
         Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.insert);
-             PreparedStatement statementSolution = connection.prepareStatement(SolutionDatabase.insert)) {
-            // solution
-            SolutionValue solutionValue = feedValue.getSolution();
-            SolutionDatabase.prepareInsert(statementSolution, solutionValue);
-            ResultSet rs = statementSolution.executeQuery();
-            rs.next();
-            Solution solution = SolutionDatabase.get(rs);
-            // feed
-            FeedDatabase.prepareInsert(statement, feedValue, solution.getId());
-            rs = statement.executeQuery();
-            rs.next();
-            Feed feed = FeedDatabase.get(rs);
-            if (baseFeed != null) {
-                List<SolutionReactive> solutionReactives = baseFeed.getSolution().getReactives();
-                if ((solutionReactives != null) && (solutionReactives.size() > 0)) {
-                    try (PreparedStatement statementSolutionReactive = connection.prepareStatement(SolutionReactiveDatabase.insert)) {
-                        Long solutionTo = solution.getId();
-                        for (SolutionReactive solutionReactive : solutionReactives) {
-                            SolutionReactiveDatabase.prepareInsert(statementSolutionReactive, solutionTo, solutionReactive);
-                            int rc = statementSolutionReactive.executeUpdate();
-                        }
+        // solution
+        SolutionValue solutionValue = feedValue.getSolution();
+        Solution solution = SolutionDatabase.insert(connection, solutionValue);
+        // feed
+        Feed feed = FeedDatabase.insert(connection, feedValue, solution.getId());
+        if (baseFeed != null) {
+            List<SolutionReactive> solutionReactives = baseFeed.getSolution().getReactives();
+            if ((solutionReactives != null) && (solutionReactives.size() > 0)) {
+                try (PreparedStatement statementSolutionReactive = connection.prepareStatement(SolutionReactiveDatabase.insert)) {
+                    Long solutionTo = solution.getId();
+                    for (SolutionReactive solutionReactive : solutionReactives) {
+                        SolutionReactiveDatabase.prepareInsert(statementSolutionReactive, solutionTo, solutionReactive);
+                        int rc = statementSolutionReactive.executeUpdate();
                     }
-                    solution.setReactives(solutionReactives);
                 }
+                solution.setReactives(solutionReactives);
             }
-            feed.setSolution(solution);
-            connection.commit();
-            String message = String.format("Питательная среда %d добавлена.", feed.getId());
-            log.info(message);
-            return new HttpResponse(200, feed);
         }
+        feed.setSolution(solution);
+        connection.commit();
+        String message = String.format("Питательная среда %d добавлена.", feed.getId());
+        log.info(message);
+        return new HttpResponse(200, feed);
     }
 
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {
@@ -107,7 +99,7 @@ public class FeedHandler extends HandlerCRUD {
                 catch (EntityNotFoundException e) {
                     String message = e.getMessage();
                     log.info(message);
-                    return new HttpResponse(200, message);
+                    return new HttpResponse(404, message);
                 }
                 feeds.add(feed);
             }
@@ -122,7 +114,7 @@ public class FeedHandler extends HandlerCRUD {
         } catch (EntityNotFoundException e) {
             String message = e.getMessage();
             log.info(message);
-            return new HttpResponse(200, message);
+            return new HttpResponse(404, message);
         }
     }
 
@@ -137,16 +129,19 @@ public class FeedHandler extends HandlerCRUD {
         try (PreparedStatement statement = connection.prepareStatement(FeedDatabase.deleteById)) {
             FeedDatabase.prepareDeleteById(statement, id);
             // TODO delete corresponding solutions
+            int code;
             String message;
             if (statement.executeUpdate() > 0) {
+                code = 200;
                 message = String.format("Питательная среда %d удалена.", id);
             }
             else {
+                code = 404;
                 message = String.format("Питательная среда %d не найдена.", id);
             }
             connection.commit();
             log.info(message);
-            return new HttpResponse(200, message);
+            return new HttpResponse(code, message);
         }
     }
 }

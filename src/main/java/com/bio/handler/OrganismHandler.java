@@ -7,15 +7,16 @@ import com.bio.entity.Organism;
 import com.bio.value.OrganismValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-@Log
 public class OrganismHandler extends HandlerCRUD {
+
+    private static Logger log = Logger.getLogger(OrganismHandler.class.getName());
 
     public HttpResponse create(HttpExchange exchange) throws IOException, SQLException {
         InputStream input = exchange.getRequestBody();
@@ -37,17 +38,11 @@ public class OrganismHandler extends HandlerCRUD {
             return new HttpResponse(400, error.toString());
         }
         Connection connection = Bio.database.getConnection();
-        try (PreparedStatement statement = connection.prepareStatement(OrganismDatabase.insert)) {
-            OrganismDatabase.prepareInsert(statement, organismValue);
-            ResultSet rs = statement.executeQuery();
-            rs.next();
-            //Long id = rs.getLong(1);
-            Organism organism = OrganismDatabase.get(rs);
-            connection.commit();
-            String message = String.format("Организм %d добавлен.", organism.getId());
-            log.info(message);
-            return new HttpResponse(200, organism);
-        }
+        Organism organism = OrganismDatabase.insert(connection, organismValue);
+        connection.commit();
+        String message = String.format("Организм %d добавлен.", organism.getId());
+        log.info(message);
+        return new HttpResponse(200, organism);
     }
 
     public HttpResponse readAll(HttpExchange exchange) throws SQLException {

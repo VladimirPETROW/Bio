@@ -9,14 +9,15 @@ import com.bio.entity.SolutionReactive;
 import com.bio.value.SolutionReactiveValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.logging.Logger;
 
-@Log
 public class SolutionReactiveHandler extends HandlerNestedCRUD {
+
+    private static Logger log = Logger.getLogger(SolutionReactiveHandler.class.getName());
 
     public HttpResponse createNested(HttpExchange exchange, Long id) throws IOException, SQLException {
         InputStream input = exchange.getRequestBody();
@@ -60,7 +61,7 @@ public class SolutionReactiveHandler extends HandlerNestedCRUD {
             if (!rs.next()) {
                 String message = String.format("Реактив %d в растворе не найден.", idSecond);
                 log.info(message);
-                return new HttpResponse(200, message);
+                return new HttpResponse(404, message);
             }
             SolutionReactive solutionReactive = SolutionReactiveDatabase.get(rs);
             ReactiveDatabase.prepareSelectById(statementReactive, solutionReactive.getReactive().getId());

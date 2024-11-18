@@ -3,23 +3,42 @@ package com.bio.database;
 import com.bio.entity.Material;
 import com.bio.value.MaterialValue;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class MaterialDatabase {
 
     public static String createTable = "CREATE TABLE IF NOT EXISTS material (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name TEXT, unit TEXT, count NUMERIC(8, 4), price NUMERIC(8, 2))";
-    public static String setIdSeq = "SELECT setval('material_id_seq', (SELECT max(id) FROM material))";
-    public static String insert = "INSERT INTO material (name, unit, count, price) VALUES (?, ?, ?, ?) RETURNING id";
+    public static String[] setIdSeq = {"ALTER TABLE material ALTER COLUMN id RESTART WITH ", "SELECT max(id) FROM material"};
+    public static String insert = "INSERT INTO material (name, unit, count, price) VALUES (?, ?, ?, ?)";
     public static String select = "SELECT id, name, unit, count, price FROM material ORDER BY id";
     public static String selectById = "SELECT id, name, unit, count, price FROM material WHERE id = ?";
     public static String deleteById = "DELETE FROM material WHERE id = ?";
 
+    public static long standardId = 1000;
+
     public static void init(Statement statement) throws SQLException {
         statement.execute(createTable);
-        statement.execute(setIdSeq);
+        // id
+        ResultSet rs = statement.executeQuery(setIdSeq[1]);
+        rs.next();
+        long max = rs.getLong(1);
+        max = Math.max(max, standardId);
+        statement.execute(setIdSeq[0] + (max + 1));
+    }
+
+    public static Material insert(Connection connection, MaterialValue materialValue) throws SQLException {
+        try (PreparedStatement stmtInsert = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement stmtSelect = connection.prepareStatement(selectById)) {
+            prepareInsert(stmtInsert, materialValue);
+            stmtInsert.executeUpdate();
+            ResultSet rs = stmtInsert.getGeneratedKeys();
+            rs.next();
+            Long id = rs.getLong(1);
+            prepareSelectById(stmtSelect, id);
+            rs = stmtSelect.executeQuery();
+            rs.next();
+            return get(rs);
+        }
     }
 
     public static void prepareInsert(PreparedStatement statement, MaterialValue materialValue) throws SQLException {

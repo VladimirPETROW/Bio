@@ -27,12 +27,20 @@ $(document).ready(function() {
 
         refresh: function() {
             var html = "";
-            for (var i = 0; i < this.data.length; i++) {
-                feed = this.data[i];
-                html += "<tr data-feed-id='" + feed.id + "' class='item' onclick='javascript:$.feed.select(this.getAttribute(\"data-feed-id\"));'>" +
-                            "<th class='table-light'>" + feed.id + "</th>" +
-                            "<td>" + feed.solution.name + "</td>" +
-                        "</tr>";
+            if (this.data.length > 0) {
+                for (var i = 0; i < this.data.length; i++) {
+                    feed = this.data[i];
+                    html += "<tr data-feed-id='" + feed.id + "' class='item' onclick='javascript:$.feed.select(this.getAttribute(\"data-feed-id\"));'>" +
+                                "<th class='table-light'>" + feed.id + "</th>" +
+                                "<td>" + feed.solution.name + "</td>" +
+                            "</tr>";
+                }
+                $(".feed-table").removeClass("d-none");
+                $(".feed-empty").addClass("d-none");
+            }
+            else {
+                $(".feed-empty").removeClass("d-none");
+                $(".feed-table").addClass("d-none");
             }
             $(".feed-tbody").html(html);
             $(".feed").removeClass("d-none");
