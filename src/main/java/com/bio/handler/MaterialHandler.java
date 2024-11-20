@@ -67,8 +67,12 @@ public class MaterialHandler extends HandlerCRUD {
         }
     }
 
+    public HttpResponse rewriteById(HttpExchange exchange, Long id) throws IOException, SQLException {
+        return null;
+    }
+
     /*
-    public HttpResponse updateById(HttpExchange exchange, Long id) throws IOException, SQLException {
+    public HttpResponse modifyById(HttpExchange exchange, Long id) throws IOException, SQLException {
         return null;
     }
     */

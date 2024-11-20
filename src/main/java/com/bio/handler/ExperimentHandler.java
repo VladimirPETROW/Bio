@@ -105,8 +105,25 @@ public class ExperimentHandler extends HandlerCRUD {
         }
     }
 
+    public HttpResponse rewriteById(HttpExchange exchange, Long id) throws IOException, SQLException {
+        InputStream input = exchange.getRequestBody();
+        String request = Handlers.readBytes(input).toString();
+        ObjectMapper mapper = new ObjectMapper();
+        //mapper.registerModule(new JavaTimeModule());
+        ExperimentValue experimentValue = mapper.readValue(request, ExperimentValue.class);
+        Connection connection = Bio.database.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(ExperimentDatabase.rewriteById)) {
+            ExperimentDatabase.prepareRewriteById(statement, id, experimentValue);
+            int rs = statement.executeUpdate();
+            connection.commit();
+            String message = String.format("Эксперимент %d обновлен.", id);
+            log.info(message);
+            return new HttpResponse(200, message);
+        }
+    }
+
     /*
-    public HttpResponse updateById(HttpExchange exchange, Long id) throws IOException, SQLException {
+    public HttpResponse modifyById(HttpExchange exchange, Long id) throws IOException, SQLException {
         return null;
     }
     */

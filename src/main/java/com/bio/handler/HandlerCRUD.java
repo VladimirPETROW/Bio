@@ -28,9 +28,13 @@ public abstract class HandlerCRUD {
                 worker = this::read;
                 break;
             }
+            case PUT: {
+                worker = this::rewrite;
+                break;
+            }
             /*
             case PATCH: {
-                worker = this::update;
+                worker = this::modify;
                 break;
             }
             */
@@ -72,8 +76,7 @@ public abstract class HandlerCRUD {
         return readAll(exchange);
     }
 
-    /*
-    public HttpResponse update(HttpExchange exchange) throws IOException, SQLException {
+    public HttpResponse rewrite(HttpExchange exchange) throws IOException, SQLException {
         String start = exchange.getHttpContext().getPath();
         String request = exchange.getRequestURI().getPath();
         if (!request.startsWith(start)) {
@@ -84,9 +87,26 @@ public abstract class HandlerCRUD {
         String last = request.substring(start.length());
         if (!last.isEmpty()) {
             Long id = Long.parseLong(last);
-            return updateById(exchange, id);
+            return rewriteById(exchange, id);
         }
-        return HttpResponse.createResponse(400);
+        return new HttpResponse(400, "Отсутствует идентификатор.");
+    }
+
+    /*
+    public HttpResponse modify(HttpExchange exchange) throws IOException, SQLException {
+        String start = exchange.getHttpContext().getPath();
+        String request = exchange.getRequestURI().getPath();
+        if (!request.startsWith(start)) {
+            String message = "Неверный путь.";
+            log.severe(message);
+            return new HttpResponse(500, message);
+        }
+        String last = request.substring(start.length());
+        if (!last.isEmpty()) {
+            Long id = Long.parseLong(last);
+            return modifyById(exchange, id);
+        }
+        return HttpResponse.createResponse(400, "Отсутствует идентификатор.");
     }
     */
 
@@ -109,7 +129,9 @@ public abstract class HandlerCRUD {
 
     public abstract HttpResponse readAll(HttpExchange exchange) throws SQLException;
 
-    //public abstract HttpResponse updateById(HttpExchange exchange, Long id) throws IOException, SQLException;
+    public abstract HttpResponse rewriteById(HttpExchange exchange, Long id) throws IOException, SQLException;
+
+    //public abstract HttpResponse modifyById(HttpExchange exchange, Long id) throws IOException, SQLException;
 
     public abstract HttpResponse deleteById(HttpExchange exchange, Long id) throws SQLException;
 

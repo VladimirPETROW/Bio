@@ -70,14 +70,20 @@ html, body {
     border-left: 0px;
 }
 
-/* properties */
+/* properties * /
 
 .property-value {
-    background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity));
-    /*cursor: pointer;*/
+    /*background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity));* /
+    /*cursor: pointer;* /
 }
 .property-value:empty::before {
     content: "\200b";
+}
+
+/* edit */
+
+.edited {
+    border: 1px solid #86b7fe;
 }
 
 /* validator */

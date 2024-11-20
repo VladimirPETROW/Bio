@@ -12,6 +12,7 @@ public class ExperimentDatabase {
     public static String createTable = "CREATE TABLE IF NOT EXISTS experiment (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, organism BIGINT, feed BIGINT, ferment_begin TIMESTAMP, ferment_end TIMESTAMP, speed NUMERIC(6, 2), temperature NUMERIC(6, 2), ph NUMERIC(4, 2), whole NUMERIC(8, 4), product NUMERIC(8, 4), koe NUMERIC(8, 4), comment TEXT)";
     public static String[] setIdSeq = {"ALTER TABLE experiment ALTER COLUMN id RESTART WITH ", "SELECT max(id) FROM experiment"};
     public static String insert = "INSERT INTO experiment (organism, feed, ferment_begin, ferment_end, speed, temperature, ph, whole, product, koe, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static String rewriteById = "UPDATE experiment SET organism = ?, feed = ?, ferment_begin = ?, ferment_end = ?, speed = ?, temperature = ?, ph = ?, whole = ?, product = ?, koe = ?, comment = ? WHERE id = ?";
     public static String select = "SELECT id, organism, feed, ferment_begin, ferment_end, speed, temperature, ph, whole, product, koe, comment FROM experiment ORDER BY id";
     public static String selectById = "SELECT id, organism, feed, ferment_begin, ferment_end, speed, temperature, ph, whole, product, koe, comment FROM experiment WHERE id = ?";
     public static String deleteById = "DELETE FROM experiment WHERE id = ?";
@@ -114,6 +115,33 @@ public class ExperimentDatabase {
         }
         experiment.setComment(rs.getString(12));
         return experiment;
+    }
+
+    public static void prepareRewriteById(PreparedStatement statement, Long id, ExperimentValue experimentValue) throws SQLException {
+        statement.setObject(1, experimentValue.getOrganism());
+        statement.setLong(2, experimentValue.getFeed());
+        LocalDateTime fermentBegin = experimentValue.getFermentBegin();
+        if (fermentBegin == null) {
+            statement.setObject(3, null);
+        }
+        else {
+            statement.setTimestamp(3, Timestamp.valueOf(fermentBegin));
+        }
+        LocalDateTime fermentEnd = experimentValue.getFermentEnd();
+        if (fermentEnd == null) {
+            statement.setObject(4, null);
+        }
+        else {
+            statement.setTimestamp(4, Timestamp.valueOf(fermentEnd));
+        }
+        statement.setObject(5, experimentValue.getSpeed());
+        statement.setObject(6, experimentValue.getTemperature());
+        statement.setObject(7, experimentValue.getPh());
+        statement.setObject(8, experimentValue.getWhole());
+        statement.setObject(9, experimentValue.getProduct());
+        statement.setObject(10, experimentValue.getKoe());
+        statement.setString(11, experimentValue.getComment());
+        statement.setLong(12, id);
     }
 
     public static void prepareSelectById(PreparedStatement statement, Long id) throws SQLException {

@@ -8,6 +8,23 @@
     <link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
+    <div class="modal" id="revertEdit_view" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen-md-down modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Отмена редактирования</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Редактирование будет отменено.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
+                    <button id="revertEdit_revert" type="button" class="btn btn-outline-primary">Подтвердить</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="programAbout_view" tabindex="-1">
         <div class="modal-dialog modal-fullscreen-md-down modal-md">
             <div class="modal-content">
@@ -103,75 +120,105 @@
         <div class="row flex-shrink-1 m-0 p-2">
             &nbsp;
         </div>
-        <div class="row flex-grow-1 overflow-hidden m-0 p-1 experimentItem d-none">
+        <div id="experimentItem_view" class="row flex-grow-1 overflow-hidden m-0 p-1 d-none">
             <div class="col p-0 h-100">
-                <div class="h-100 w-100 pb-1 overflow-hidden">
-                    <div class="px-lg-4 pb-lg-4 h-100 overflow-auto bg-light">
-                        <div class="row bg-body border shadow m-0 g-4 px-4 pt-3 pb-5">
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-12 fw-bold">Питательная среда</div>
-                                    <div id="feed" class="col border m-2 p-2 property-value"></div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row g-4 justify-content-start">
-                                    <div class="col-sm-auto">
-                                        <div class="row fw-bold">
-                                            <div class="col">Дата и время начала ферментации</div>
-                                        </div>
-                                        <div class="row">
-                                            <div id="fermentBegin" class="col border m-2 p-2 property-value"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-auto">
-                                        <div class="row fw-bold">
-                                            <div class="col">Дата и время окончания ферментации</div>
-                                        </div>
-                                        <div class="row">
-                                            <div id="fermentEnd" class="col border m-2 p-2 property-value"></div>
+                <div class="d-flex flex-column h-100 p-0">
+                    <div class="row flex-grow-1 m-0 overflow-hidden">
+                        <div class="px-lg-4 pb-lg-4 h-100 overflow-auto bg-light">
+                            <div class="row bg-body border shadow m-0 g-4 px-4 pt-3 pb-5">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 fw-bold">Питательная среда</div>
+                                        <div class="col m-2 p-0">
+                                            <div id="experimentItem_feed" class="form-control bg-light text-break">&nbsp;</div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col">
-                                <div class="row g-4">
-                                    <div class="col-sm-auto">
-                                        <div class="row fw-bold">
-                                            <div class="col">Количество оборотов мешалки</div>
+                                <div class="col-12">
+                                    <div class="row g-4 justify-content-start">
+                                        <div class="col-sm-auto">
+                                            <div class="row fw-bold">
+                                                <div class="col">Дата и время начала ферментации</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col m-2 p-0">
+                                                    <input id="experimentItem_fermentBegin" name="fermentBegin" type="text" class="form-control" data-valid-empty="true" data-valid-type="datetime">
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="row">
-                                            <div id="speed" class="col border m-2 p-2 property-value"></div>
+                                        <div class="col-sm-auto">
+                                            <div class="row fw-bold">
+                                                <div class="col">Дата и время окончания ферментации</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col m-2 p-0">
+                                                    <input id="experimentItem_fermentEnd" name="fermentEnd" type="text" class="form-control" data-valid-empty="true" data-valid-type="datetime">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-auto">
-                                        <div class="row fw-bold">
-                                            <div class="col">Поддерживаемая температура</div>
+                                </div>
+                                <div class="col">
+                                    <div class="row g-4">
+                                        <div class="col-sm-auto">
+                                            <div class="row fw-bold">
+                                                <div class="col">Количество оборотов мешалки</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col m-2 p-0">
+                                                    <input id="experimentItem_speed" name="speed" type="text" class="form-control" data-valid-empty="true" data-valid-type="number">
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="row">
-                                            <div id="temperature" class="col border m-2 p-2 property-value"></div>
+                                        <div class="col-sm-auto">
+                                            <div class="row fw-bold">
+                                                <div class="col">Поддерживаемая температура</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col m-2 p-0">
+                                                    <input id="experimentItem_temperature" name="temperature" type="text" class="form-control" data-valid-empty="true" data-valid-type="number">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-auto">
+                                            <div class="row fw-bold">
+                                                <div class="col">Поддерживаемый Ph</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col m-2 p-0">
+                                                    <input id="experimentItem_ph" name="ph" type="text" class="form-control" data-valid-empty="true" data-valid-type="number">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-auto">
-                                        <div class="row fw-bold">
-                                            <div class="col">Поддерживаемый Ph</div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 fw-bold">КОЕ/г</div>
+                                        <div class="col col-sm-3 col-lg-2 col-xl-1 m-2 p-0">
+                                            <input id="experimentItem_koe" name="koe" type="text" class="form-control" data-valid-empty="true" data-valid-type="number">
                                         </div>
-                                        <div class="row">
-                                            <div id="ph" class="col border m-2 p-2 property-value"></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 fw-bold">Комментарий</div>
+                                        <div class="col m-2 p-0">
+                                            <textarea id="experimentItem_comment" name="comment" class="form-control"></textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-12 fw-bold">КОЕ/г</div>
-                                    <div id="koe" class="col col-sm-3 col-lg-2 col-xl-1 border m-2 p-2 property-value"></div>
+                        </div>
+                    </div>
+                    <div class="row flex-schrink-1 m-0 pb-1">
+                        <div class="col p-0">
+                            <div class="row justify-content-center align-items-center g-2 pt-2 experiment-edited d-none">
+                                <div class="col-md-auto">
+                                    <button id="experimentItem_revert" type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#revertEdit_view">Отменить редактирование</button>
                                 </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-12 fw-bold">Комментарий</div>
-                                    <div id="comment" class="col border m-2 p-2 text-break property-value"></div>
+                                <div class="col-md-auto">
+                                    <button id="experimentItem_save" type="button" class="btn btn-outline-primary w-100">Сохранить</button>
                                 </div>
                             </div>
                         </div>

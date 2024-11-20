@@ -33,8 +33,8 @@ $(document).ready(function() {
                     html += "<tr data-experiment-id='" + experiment.id + "' class='item' onclick='javascript:$.experiment.select(this.getAttribute(\"data-experiment-id\"));'>" +
                                 //"<th class='table-light'>" + experiment.id + "</th>" +
                                 "<td>" + experiment.feed.solution.name + "</td>" +
-                                "<td>" + (experiment.fermentBegin ? experiment.fermentBegin : "") + "</td>" +
-                                "<td>" + (experiment.fermentEnd ? experiment.fermentEnd : "") + "</td>" +
+                                "<td><nobr>" + (experiment.fermentBegin ? experiment.fermentBegin : "") + "</nobr></td>" +
+                                "<td><nobr>" + (experiment.fermentEnd ? experiment.fermentEnd : "") + "</nobr></td>" +
                                 "<td>" + (experiment.speed ? experiment.speed : "") + "</td>" +
                                 "<td>" + (experiment.temperature ? experiment.temperature : "") + "</td>" +
                                 "<td>" + (experiment.ph ? experiment.ph : "") + "</td>" +
